@@ -23,24 +23,9 @@ npm run build
 
 ## Deploy
 
-GitHub Pages is deployed by GitHub Actions. In repository settings, set Pages source to **GitHub Actions**.
-
-GitHub Pages builds with `GITHUB_PAGES=true`, so the Vite base path becomes `/MockParty/`. Vercel builds without that flag, so the base path is `/`.
+Vercel builds with base path `/`.
 
 The app includes `noindex` metadata and a `robots.txt` disallow rule to discourage search indexing while the prototype is being reviewed. This is not access control.
-
-### GitHub Pages quick start
-
-```bash
-git init
-git add .
-git commit -m "Initial MockContest app"
-git branch -M main
-git remote add origin https://github.com/hatodove22/MockParty.git
-git push -u origin main
-```
-
-After the first push, open the repository settings and set **Pages > Source** to **GitHub Actions**.
 
 ### Vercel quick start
 
@@ -49,7 +34,7 @@ npm install
 npx vercel deploy
 ```
 
-For Vercel, the app can also be deployed by importing this repository in the Vercel dashboard. If the production URL is not under `/mockcontest/`, change `base` in `vite.config.js` to `/`.
+For limited review, use Vercel Deployment Protection and share the protected deployment URL instead of a public production alias.
 
 ## Important boundary
 
