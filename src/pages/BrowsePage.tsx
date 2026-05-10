@@ -7,9 +7,30 @@ import { EmptyState } from '../components/common/EmptyState';
 import { CategoryRail } from '../components/contest/CategoryRail';
 import { ContestCard } from '../components/contest/ContestCard';
 import { useLanguage } from '../i18n/LanguageContext';
+import { statusLabel } from '../utils/displayLabels';
+
+const browseCopy = {
+  en: {
+    status: 'Status',
+    sort: 'Sort',
+    recommended: 'Recommended',
+    prize: 'Highest prize',
+    entries: 'Most designs',
+    deadline: 'Ending soon',
+  },
+  ja: {
+    status: '状態',
+    sort: '並び替え',
+    recommended: 'おすすめ順',
+    prize: '賞金が高い順',
+    entries: '応募数が多い順',
+    deadline: '締切が近い順',
+  },
+} as const;
 
 export function BrowsePage() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+  const text = browseCopy[language];
   const [category, setCategory] = useState<Category | 'All'>('All');
   const [query, setQuery] = useState('');
   const [guaranteed, setGuaranteed] = useState(false);
@@ -70,22 +91,23 @@ export function BrowsePage() {
               {t('guaranteedOnly')}
             </label>
             <label className="flex items-center gap-2 text-sm font-bold">
-              Status
+              {text.status}
               <select className="focus-ring rounded-md border border-navy/15 bg-white px-3 py-2" value={status} onChange={(event) => setStatus(event.target.value as typeof status)}>
-                <option>All</option>
-                <option>Open</option>
-                <option>Finalist</option>
-                <option>Completed</option>
+                {(['All', 'Open', 'Finalist', 'Completed'] as const).map((item) => (
+                  <option key={item} value={item}>
+                    {statusLabel(item, language)}
+                  </option>
+                ))}
               </select>
             </label>
           </div>
           <label className="flex items-center gap-2 text-sm font-bold">
-            Sort
+            {text.sort}
             <select className="focus-ring rounded-md border border-navy/15 bg-white px-3 py-2" value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}>
-              <option value="recommended">Recommended</option>
-              <option value="prize">Highest prize</option>
-              <option value="entries">Most designs</option>
-              <option value="deadline">Ending soon</option>
+              <option value="recommended">{text.recommended}</option>
+              <option value="prize">{text.prize}</option>
+              <option value="entries">{text.entries}</option>
+              <option value="deadline">{text.deadline}</option>
             </select>
           </label>
         </div>

@@ -10,13 +10,26 @@ import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
 import { Pill } from '../common/Pill';
 
-const purposes = ['Compare UX direction', 'Review screen mockups', 'Test a user flow', 'See a simple motion idea', blockedPurpose];
-const safetyItems = [
-  'No real customer data, personal data, or confidential information is included.',
-  'No API keys, authentication information, or payment information is included.',
-  'Submitted work is for prototype review and not production use.',
-  'Development contracts, acceptance testing, maintenance, and security are handled directly by the parties.',
-];
+const purposeOptions = {
+  en: ['Compare UX direction', 'Review screen mockups', 'Test a user flow', 'See a simple motion idea', blockedPurpose],
+  ja: ['UXの方向性を比較する', '画面モックを確認する', 'ユーザーフローを検証する', '簡単な動きの案を見る', blockedPurpose],
+} as const;
+
+const safetyCopy = {
+  en: [
+    'No real customer data, personal data, or confidential information is included.',
+    'No API keys, authentication information, or payment information is included.',
+    'Submitted work is for prototype review and not production use.',
+    'Development contracts, acceptance testing, maintenance, and security are handled directly by the parties.',
+  ],
+  ja: [
+    '実在の顧客データ、個人情報、機密情報を含めていません。',
+    'APIキー、認証情報、決済情報を含めていません。',
+    '提出物はプロトタイプ審査用であり、本番利用を保証しません。',
+    '開発契約、受入テスト、保守、セキュリティは当事者間で別途扱います。',
+  ],
+} as const;
+
 const packageCopy = {
   en: {
     Starter: { name: 'Starter', entries: '3-5 entries', days: '5 days', description: 'Best for a quick direction check before deeper design work.' },
@@ -39,38 +52,108 @@ interface ContestWizardProps {
   onComplete?: () => void;
 }
 
-function statusText(step: number, category: Category | '', selectedPackage: ContestPackage | undefined, title: string, goal: string, safetyChecks: boolean[]) {
-  if (step === 0 && !category) return 'Choose one category to continue.';
-  if (step === 1 && !selectedPackage) return 'Choose a package to continue.';
-  if (step === 2 && (!title.trim() || !goal.trim())) return 'Add a contest title and goal.';
-  if (step === 3 && safetyChecks.some((checked) => !checked)) return 'Confirm every safety checkpoint before review.';
+const wizardCopy = {
+  en: {
+    steps: ['Category', 'Package', 'Brief', 'Safety', 'Review'],
+    chooseCategory: 'Choose one category to continue.',
+    choosePackage: 'Choose a package to continue.',
+    addBrief: 'Add a contest title and goal.',
+    safety: 'Confirm every safety checkpoint before review.',
+    productionBlocked: 'MockContest does not handle production development. Switch the purpose to UX mock comparison before continuing.',
+    productionNotice: 'MockContest does not handle production development.',
+    switchPurpose: 'Switch to UX mock comparison',
+    safetyLink: 'Safety',
+    titleLabel: 'Contest title',
+    goalLabel: 'Goal',
+    purposeLabel: 'Purpose',
+    categoryLabel: 'Category',
+    packageLabel: 'Package',
+    briefLabel: 'Brief',
+    notSelected: 'Not selected',
+    untitled: 'Untitled contest',
+    noGoal: 'No goal entered.',
+    confirmedCount: (count: number, total: number) => `${count} of ${total} safety checks confirmed.`,
+    modalTitle: 'Open a contest',
+    completion: {
+      category: 'Choose a category before confirming.',
+      package: 'Choose a package before confirming.',
+      brief: 'Add a contest title and goal before confirming.',
+      safety: 'Confirm every safety checkpoint before confirming.',
+    },
+    back: 'Back',
+    next: 'Next',
+    confirm: 'Confirm mock contest',
+  },
+  ja: {
+    steps: ['カテゴリ', 'パッケージ', '依頼内容', '安全確認', '確認'],
+    chooseCategory: '続行するにはカテゴリを1つ選んでください。',
+    choosePackage: '続行するにはパッケージを選んでください。',
+    addBrief: 'コンテストタイトルと目的を入力してください。',
+    safety: '確認へ進む前に、すべての安全項目にチェックしてください。',
+    productionBlocked: 'MockContestは本番開発を扱いません。続行するには用途をUXモック比較へ切り替えてください。',
+    productionNotice: 'MockContestは本番開発を扱いません。',
+    switchPurpose: 'UXモック比較へ切り替える',
+    safetyLink: '安全方針',
+    titleLabel: 'コンテストタイトル',
+    goalLabel: '目的',
+    purposeLabel: '用途',
+    categoryLabel: 'カテゴリ',
+    packageLabel: 'パッケージ',
+    briefLabel: '依頼内容',
+    notSelected: '未選択',
+    untitled: '無題のコンテスト',
+    noGoal: '目的が未入力です。',
+    confirmedCount: (count: number, total: number) => `${total}件中${count}件の安全確認が完了しています。`,
+    modalTitle: 'コンテストを開始',
+    completion: {
+      category: '確定前にカテゴリを選んでください。',
+      package: '確定前にパッケージを選んでください。',
+      brief: '確定前にコンテストタイトルと目的を入力してください。',
+      safety: '確定前にすべての安全項目を確認してください。',
+    },
+    back: '戻る',
+    next: '次へ',
+    confirm: 'モックコンテストを確認',
+  },
+} as const;
+
+type WizardText = (typeof wizardCopy)[keyof typeof wizardCopy];
+
+function statusText(step: number, category: Category | '', selectedPackage: ContestPackage | undefined, title: string, goal: string, safetyChecks: boolean[], copy: WizardText) {
+  if (step === 0 && !category) return copy.chooseCategory;
+  if (step === 1 && !selectedPackage) return copy.choosePackage;
+  if (step === 2 && (!title.trim() || !goal.trim())) return copy.addBrief;
+  if (step === 3 && safetyChecks.some((checked) => !checked)) return copy.safety;
   return '';
 }
 
-function completionError(category: Category | '', selectedPackage: ContestPackage | undefined, title: string, goal: string, safetyChecks: boolean[]) {
-  if (!category) return 'Choose a category before confirming.';
-  if (!selectedPackage) return 'Choose a package before confirming.';
-  if (!title.trim() || !goal.trim()) return 'Add a contest title and goal before confirming.';
-  if (safetyChecks.some((checked) => !checked)) return 'Confirm every safety checkpoint before confirming.';
+function completionError(category: Category | '', selectedPackage: ContestPackage | undefined, title: string, goal: string, safetyChecks: boolean[], copy: WizardText) {
+  if (!category) return copy.completion.category;
+  if (!selectedPackage) return copy.completion.package;
+  if (!title.trim() || !goal.trim()) return copy.completion.brief;
+  if (safetyChecks.some((checked) => !checked)) return copy.completion.safety;
   return '';
 }
 
 export function ContestWizard({ open = true, onClose = () => undefined, embedded = false, onComplete }: ContestWizardProps) {
   const { categoryLabel, language } = useLanguage();
   const packageText = packageCopy[language];
+  const text = wizardCopy[language];
+  const purposes = purposeOptions[language];
+  const safetyItems = safetyCopy[language];
   const [step, setStep] = useState(0);
   const [category, setCategory] = useState<Category | ''>('');
   const [selectedPackageName, setSelectedPackageName] = useState<ContestPackage['name'] | ''>('');
   const [title, setTitle] = useState('New UX mock contest');
   const [goal, setGoal] = useState('We want to compare screen directions before contracting production development.');
-  const [purpose, setPurpose] = useState(purposes[0]);
+  const [purpose, setPurpose] = useState<string>(purposes[0]);
   const [safetyChecks, setSafetyChecks] = useState(() => safetyItems.map(() => false));
   const [error, setError] = useState('');
   const selectedPackage = useMemo(() => packages.find((pack) => pack.name === selectedPackageName), [selectedPackageName]);
   const purposeAllowed = useMemo(() => canAdvancePurpose(purpose), [purpose]);
-  const steps = ['Category', 'Package', 'Brief', 'Safety', 'Review'];
+  const steps = text.steps;
 
-  const stepStatus = statusText(step, category, selectedPackage, title, goal, safetyChecks);
+  const stepStatus = statusText(step, category, selectedPackage, title, goal, safetyChecks, text);
 
   function goToStep(nextStep: number) {
     setError('');
@@ -79,7 +162,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
 
   function continueWizard() {
     if (!purposeAllowed) {
-      setError('MockContest does not handle production development. Switch the purpose to UX mock comparison before continuing.');
+      setError(text.productionBlocked);
       return;
     }
 
@@ -89,7 +172,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
     }
 
     if (step === steps.length - 1) {
-      const finalError = completionError(category, selectedPackage, title, goal, safetyChecks);
+      const finalError = completionError(category, selectedPackage, title, goal, safetyChecks, text);
       if (finalError) {
         setError(finalError);
         return;
@@ -171,7 +254,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
       {step === 2 && (
         <div className="grid gap-4">
           <label className="grid gap-2 text-sm font-bold">
-            Contest title
+            {text.titleLabel}
             <input
               className="focus-ring rounded-md border border-navy/15 px-3 py-2"
               value={title}
@@ -179,7 +262,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
             />
           </label>
           <label className="grid gap-2 text-sm font-bold">
-            Goal
+            {text.goalLabel}
             <textarea
               className="focus-ring min-h-24 rounded-md border border-navy/15 px-3 py-2"
               value={goal}
@@ -187,7 +270,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
             />
           </label>
           <div>
-            <p className="mb-2 text-sm font-bold">Purpose</p>
+            <p className="mb-2 text-sm font-bold">{text.purposeLabel}</p>
             <div className="flex flex-wrap gap-2">
               {purposes.map((item) => (
                 <Button
@@ -206,19 +289,19 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
           {!purposeAllowed && (
             <div className="grid gap-3 rounded-lg bg-rose-50 p-3 text-sm font-semibold text-rose-800 sm:grid-cols-[1fr_auto_auto] sm:items-center">
               <span className="flex gap-2">
-                <AlertTriangle size={18} /> MockContest does not handle production development.
+                <AlertTriangle size={18} /> {text.productionNotice}
               </span>
               <Button
                 variant="danger"
                 onClick={() => {
-                  setPurpose('Compare UX direction');
+                  setPurpose(purposes[0]);
                   setError('');
                 }}
               >
-                Switch to UX mock comparison
+                {text.switchPurpose}
               </Button>
               <Link className="font-black underline" to="/safety" onClick={onClose}>
-                Safety
+                {text.safetyLink}
               </Link>
             </div>
           )}
@@ -248,40 +331,40 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
         <div className="grid gap-4">
           <div className="grid gap-3 md:grid-cols-2">
             <div className="rounded-lg bg-neutralPanel p-4">
-              <p className="text-xs font-bold text-navy/50">Category</p>
-              <p className="mt-1 font-black">{category ? categoryLabel(category) : 'Not selected'}</p>
+              <p className="text-xs font-bold text-navy/50">{text.categoryLabel}</p>
+              <p className="mt-1 font-black">{category ? categoryLabel(category) : text.notSelected}</p>
             </div>
             <div className="rounded-lg bg-neutralPanel p-4">
-              <p className="text-xs font-bold text-navy/50">Package</p>
+              <p className="text-xs font-bold text-navy/50">{text.packageLabel}</p>
               <p className="mt-1 font-black">
-                {selectedPackage ? `${packageText[selectedPackage.name].name} - ${selectedPackage.price}` : 'Not selected'}
+                {selectedPackage ? `${packageText[selectedPackage.name].name} - ${selectedPackage.price}` : text.notSelected}
               </p>
             </div>
           </div>
           <div className="rounded-lg border border-navy/10 bg-white p-4">
-            <p className="text-xs font-bold text-navy/50">Brief</p>
-            <h3 className="mt-2 text-xl font-black">{title || 'Untitled contest'}</h3>
-            <p className="mt-2 text-navy/70">{goal || 'No goal entered.'}</p>
-            <p className="mt-3 text-sm font-bold text-navy/55">Purpose: {purpose}</p>
+            <p className="text-xs font-bold text-navy/50">{text.briefLabel}</p>
+            <h3 className="mt-2 text-xl font-black">{title || text.untitled}</h3>
+            <p className="mt-2 text-navy/70">{goal || text.noGoal}</p>
+            <p className="mt-3 text-sm font-bold text-navy/55">{text.purposeLabel}: {purpose}</p>
           </div>
           <div className="flex gap-3 rounded-lg bg-emerald-50 p-4 text-sm font-semibold text-emerald-900">
             <ShieldCheck size={20} />
-            <p>{safetyChecks.filter(Boolean).length} of {safetyItems.length} safety checks confirmed.</p>
+            <p>{text.confirmedCount(safetyChecks.filter(Boolean).length, safetyItems.length)}</p>
           </div>
         </div>
       )}
 
       <div className="mt-6 flex justify-between">
         <Button variant="ghost" onClick={() => goToStep(Math.max(0, step - 1))} disabled={step === 0}>
-          Back
+          {text.back}
         </Button>
         <Button onClick={continueWizard}>
           {step === steps.length - 1 ? (
             <>
-              <CheckCircle2 size={16} /> Confirm mock contest
+              <CheckCircle2 size={16} /> {text.confirm}
             </>
           ) : (
-            'Next'
+            text.next
           )}
         </Button>
       </div>
@@ -293,7 +376,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Open a contest">
+    <Modal open={open} onClose={onClose} title={text.modalTitle}>
       {content}
     </Modal>
   );

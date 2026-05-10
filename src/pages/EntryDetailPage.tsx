@@ -5,17 +5,72 @@ import { Pill } from '../components/common/Pill';
 import { RatingStars } from '../components/common/RatingStars';
 import { contests } from '../data/contests';
 import { entries } from '../data/entries';
+import { useLanguage } from '../i18n/LanguageContext';
 import { creatorSlug } from '../utils/creatorSlug';
+import { statusLabel } from '../utils/displayLabels';
+
+const detailCopy = {
+  en: {
+    notFound: 'Entry not found',
+    notFoundCopy: 'The contest or entry ID does not match an available static prototype entry.',
+    backToContests: 'Back to contests',
+    backToContest: 'Back to contest',
+    by: 'by',
+    annotated: 'Annotated screen notes',
+    score: 'Score',
+    rating: 'Rating',
+    submitted: 'Submitted',
+    recent: 'Recently submitted',
+    summary: 'Review summary',
+    criteria: 'Review criteria',
+    discussion: 'Discussion',
+    actions: 'Entry actions',
+    comments: 'comments',
+    views: 'views',
+    reviewWinner: 'Review as winner',
+    winnerLocked: 'Winner already selected',
+    backToEntries: 'Back to entries',
+    boundary: 'This static detail view summarizes prototype comparison signals only. Production build scope, acceptance, security, and support remain separate agreements.',
+    fallbackDiscussion: (comments: number, views: number) => [`${comments} review comments are available in this static summary.`, `${views} client views recorded for comparison.`],
+    pins: ['Primary flow clarity', 'State comparison', 'Decision support'],
+  },
+  ja: {
+    notFound: '応募が見つかりません',
+    notFoundCopy: 'コンテストまたは応募IDが、利用可能な静的プロトタイプの応募と一致しません。',
+    backToContests: 'コンテスト一覧へ戻る',
+    backToContest: 'コンテストへ戻る',
+    by: '作成',
+    annotated: '注釈付き画面メモ',
+    score: 'スコア',
+    rating: '評価',
+    submitted: '提出日',
+    recent: '最近提出',
+    summary: 'レビュー要約',
+    criteria: 'レビュー観点',
+    discussion: 'ディスカッション',
+    actions: '応募アクション',
+    comments: '件のコメント',
+    views: '回表示',
+    reviewWinner: '受賞候補として確認',
+    winnerLocked: '受賞選定済み',
+    backToEntries: '応募一覧へ戻る',
+    boundary: 'この静的詳細画面は、プロトタイプ比較の判断材料のみを要約します。本番開発範囲、受入、セキュリティ、サポートは別契約です。',
+    fallbackDiscussion: (comments: number, views: number) => [`この静的要約では${comments}件のレビューコメントを確認できます。`, `比較用に${views}回のクライアント表示が記録されています。`],
+    pins: ['主要フローの明確さ', '状態比較', '意思決定支援'],
+  },
+} as const;
 
 function NotFoundPanel() {
+  const { language } = useLanguage();
+  const text = detailCopy[language];
   return (
     <main className="mx-auto max-w-4xl px-4 py-14 lg:px-6">
       <section className="mock-surface rounded-lg p-6">
         <Pill tone="rose">Not found</Pill>
-        <h1 className="mt-4 text-3xl font-black">Entry not found</h1>
-        <p className="mt-3 text-navy/70">The contest or entry ID does not match an available static prototype entry.</p>
+        <h1 className="mt-4 text-3xl font-black">{text.notFound}</h1>
+        <p className="mt-3 text-navy/70">{text.notFoundCopy}</p>
         <Link className="mt-5 inline-flex rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy/90" to="/contests">
-          Back to contests
+          {text.backToContests}
         </Link>
       </section>
     </main>
@@ -23,6 +78,8 @@ function NotFoundPanel() {
 }
 
 export function EntryDetailPage() {
+  const { categoryLabel, language } = useLanguage();
+  const text = detailCopy[language];
   const { contestId, entryId } = useParams();
   const contest = contests.find((item) => item.id === Number(contestId));
   const entry = entries.find((item) => item.id === Number(entryId) && item.contestId === Number(contestId));
@@ -32,32 +89,32 @@ export function EntryDetailPage() {
   }
 
   const criteria = entry.reviewCriteria?.length ? entry.reviewCriteria : entry.tags;
-  const discussion = entry.discussion?.length
-    ? entry.discussion
-    : [`${entry.comments} review comments are available in this static summary.`, `${entry.views} client views recorded for comparison.`];
-  const submitted = entry.submittedAt ? new Date(entry.submittedAt).toLocaleDateString() : 'Recently submitted';
+  const discussion = entry.discussion?.length ? entry.discussion : text.fallbackDiscussion(entry.comments, entry.views);
+  const submitted = entry.submittedAt ? new Date(entry.submittedAt).toLocaleDateString(language === 'ja' ? 'ja-JP' : 'en-US') : text.recent;
   const annotationPins = [
-    { label: '1', className: 'left-[18%] top-[24%]', note: criteria[0] ?? 'Primary flow clarity' },
-    { label: '2', className: 'left-[52%] top-[48%]', note: criteria[1] ?? 'State comparison' },
-    { label: '3', className: 'right-[12%] bottom-[18%]', note: criteria[2] ?? 'Decision support' },
+    { label: '1', className: 'left-[18%] top-[24%]', note: criteria[0] ?? text.pins[0] },
+    { label: '2', className: 'left-[52%] top-[48%]', note: criteria[1] ?? text.pins[1] },
+    { label: '3', className: 'right-[12%] bottom-[18%]', note: criteria[2] ?? text.pins[2] },
   ];
+  const canReviewWinner = contest.status !== 'Completed';
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 lg:px-6">
       <Link className="mb-5 inline-flex items-center gap-2 text-sm font-bold text-navy/65 hover:text-orange" to={`/contests/${contest.id}`}>
-        <ArrowLeft size={16} /> Back to contest
+        <ArrowLeft size={16} /> {text.backToContest}
       </Link>
 
       <section className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <article className="mock-surface rounded-lg p-5">
           <div className="flex flex-wrap gap-2">
-            <Pill tone="navy">{contest.category}</Pill>
-            {entry.winner && <Pill tone="emerald">Winner</Pill>}
-            {entry.finalist && <Pill tone="amber">Finalist</Pill>}
+            <Pill tone="navy">{categoryLabel(contest.category)}</Pill>
+            {entry.winner && <Pill tone="emerald">{language === 'ja' ? '受賞作品' : 'Winner'}</Pill>}
+            {entry.finalist && <Pill tone="amber">{language === 'ja' ? 'ファイナリスト' : 'Finalist'}</Pill>}
+            <Pill>{statusLabel(contest.status, language)}</Pill>
           </div>
           <h1 className="mt-4 text-3xl font-black md:text-5xl">{entry.title}</h1>
           <Link className="mt-2 inline-flex font-semibold text-navy/55 hover:text-orange" to={`/creators/${creatorSlug(entry.creator)}`}>
-            by {entry.creator}
+            {text.by} {entry.creator}
           </Link>
 
           <div className={`relative mt-6 h-72 rounded-lg bg-gradient-to-br ${entry.gradient} p-4`}>
@@ -89,7 +146,7 @@ export function EntryDetailPage() {
           </div>
 
           <section className="mt-4 rounded-lg border border-navy/10 bg-white p-4">
-            <h2 className="text-sm font-black uppercase tracking-wide text-contestGreen">Annotated screen notes</h2>
+            <h2 className="text-sm font-black uppercase tracking-wide text-contestGreen">{text.annotated}</h2>
             <div className="mt-3 grid gap-2 md:grid-cols-3">
               {annotationPins.map((pin) => (
                 <div key={pin.label} className="flex gap-2 rounded-md bg-neutralPanel p-3 text-sm font-bold text-navy/70">
@@ -102,28 +159,28 @@ export function EntryDetailPage() {
 
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             <div className="rounded-md bg-neutralPanel p-4">
-              <p className="text-xs font-bold text-navy/50">Score</p>
+              <p className="text-xs font-bold text-navy/50">{text.score}</p>
               <p className="mt-1 text-2xl font-black text-orange">{entry.score}</p>
             </div>
             <div className="rounded-md bg-neutralPanel p-4">
-              <p className="text-xs font-bold text-navy/50">Rating</p>
+              <p className="text-xs font-bold text-navy/50">{text.rating}</p>
               <div className="mt-2">
                 <RatingStars rating={entry.rating} />
               </div>
             </div>
             <div className="rounded-md bg-neutralPanel p-4">
-              <p className="text-xs font-bold text-navy/50">Submitted</p>
+              <p className="text-xs font-bold text-navy/50">{text.submitted}</p>
               <p className="mt-1 font-black">{submitted}</p>
             </div>
           </div>
 
           <section className="mt-6">
-            <h2 className="text-xl font-black">Review summary</h2>
+            <h2 className="text-xl font-black">{text.summary}</h2>
             <p className="mt-3 leading-7 text-navy/70">{entry.summary || entry.review}</p>
           </section>
 
           <section className="mt-6">
-            <h2 className="text-xl font-black">Review criteria</h2>
+            <h2 className="text-xl font-black">{text.criteria}</h2>
             <div className="mt-3 grid gap-2 md:grid-cols-2">
               {criteria.map((item) => (
                 <div key={item} className="flex items-center gap-2 rounded-md bg-neutralPanel p-3 text-sm font-semibold text-navy/70">
@@ -134,7 +191,7 @@ export function EntryDetailPage() {
           </section>
 
           <section className="mt-6">
-            <h2 className="text-xl font-black">Discussion</h2>
+            <h2 className="text-xl font-black">{text.discussion}</h2>
             <div className="mt-3 grid gap-3">
               {discussion.map((item) => (
                 <p key={item} className="rounded-md border border-navy/10 bg-white p-3 text-sm leading-6 text-navy/70">
@@ -146,12 +203,12 @@ export function EntryDetailPage() {
         </article>
 
         <aside className="mock-surface h-fit rounded-lg p-5">
-          <h2 className="text-xl font-black">Entry actions</h2>
+          <h2 className="text-xl font-black">{text.actions}</h2>
           <div className="mt-4 grid grid-cols-2 gap-3 text-sm font-semibold text-navy/65">
             <span className="inline-flex items-center gap-1">
-              <MessageSquare size={16} /> {entry.comments} comments
+              <MessageSquare size={16} /> {entry.comments}{language === 'ja' ? text.comments : ` ${text.comments}`}
             </span>
-            <span>{entry.views} views</span>
+            <span>{entry.views}{language === 'ja' ? text.views : ` ${text.views}`}</span>
           </div>
           <div className="mt-5 flex flex-wrap gap-2">
             {entry.tags.map((tag) => (
@@ -159,15 +216,21 @@ export function EntryDetailPage() {
             ))}
           </div>
           <div className="mt-6 grid gap-2">
-            <Link className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white hover:bg-orange/90" to={`/contests/${contest.id}/winner-review/${entry.id}`}>
-              <MousePointerClick size={16} /> Review as winner
-            </Link>
+            {canReviewWinner ? (
+              <Link className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white hover:bg-orange/90" to={`/contests/${contest.id}/winner-review/${entry.id}`}>
+                <MousePointerClick size={16} /> {text.reviewWinner}
+              </Link>
+            ) : (
+              <span className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-neutralPanel px-4 py-2 text-sm font-semibold text-navy/60">
+                <CheckCircle2 size={16} /> {text.winnerLocked}
+              </span>
+            )}
             <Link className="focus-ring inline-flex min-h-10 items-center justify-center rounded-md border border-navy/15 bg-white px-4 py-2 text-sm font-semibold text-navy hover:border-orange/60" to={`/contests/${contest.id}`}>
-              Back to entries
+              {text.backToEntries}
             </Link>
           </div>
           <div className="mt-6 rounded-md bg-neutralPanel p-4 text-sm leading-6 text-navy/70">
-            This static detail view summarizes prototype comparison signals only. Production build scope, acceptance, security, and support remain separate agreements.
+            {text.boundary}
           </div>
         </aside>
       </section>

@@ -10,11 +10,47 @@ import { Pill } from '../components/common/Pill';
 import { EntryCard } from '../components/contest/EntryCard';
 import { EntryInspector } from '../components/contest/EntryInspector';
 import { useLanguage } from '../i18n/LanguageContext';
+import { packageLabel, statusLabel } from '../utils/displayLabels';
 
 const tabs = ['entriesTab', 'briefTab', 'feedbackTab', 'safetyTab'] as const;
+const detailCopy = {
+  en: {
+    back: 'Back to contests',
+    prize: 'Prize',
+    entries: 'Entries',
+    daysLeft: 'Days left',
+    viewArchive: 'View archive',
+    winnerSelected: 'Winner selected',
+    submissionsClosed: 'Submissions closed',
+    compare: 'Compare entries',
+    operations: 'Contest operations',
+    watchers: 'watchers',
+    requirements: 'Submission requirements',
+    closedNoEntries: 'This contest is no longer accepting new submissions.',
+    brief: 'Contest brief',
+    deliverables: 'Deliverables',
+  },
+  ja: {
+    back: 'コンテスト一覧へ戻る',
+    prize: '賞金',
+    entries: '応募',
+    daysLeft: '残り日数',
+    viewArchive: 'アーカイブを見る',
+    winnerSelected: '受賞選定済み',
+    submissionsClosed: '応募受付終了',
+    compare: '応募作品を比較',
+    operations: 'コンテスト進行',
+    watchers: 'ウォッチ中',
+    requirements: '応募要件',
+    closedNoEntries: 'このコンテストは新規応募を受け付けていません。',
+    brief: 'コンテスト概要',
+    deliverables: '成果物',
+  },
+} as const;
 
 export function ContestDetailPage() {
-  const { categoryLabel, contestBrief, contestTitle, t } = useLanguage();
+  const { categoryLabel, contestBrief, contestTitle, language, t } = useLanguage();
+  const text = detailCopy[language];
   const { contestId } = useParams();
   const contest = contests.find((item) => item.id === Number(contestId));
   const contestEntries = contest ? entries.filter((entry) => entry.contestId === contest.id) : [];
@@ -44,15 +80,15 @@ export function ContestDetailPage() {
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 lg:px-6">
       <Link className="mb-5 inline-flex items-center gap-2 text-sm font-bold text-navy/65 hover:text-orange" to="/contests">
-        <ArrowLeft size={16} /> Back to contests
+        <ArrowLeft size={16} /> {text.back}
       </Link>
       <section className="mock-surface rounded-lg p-5">
         <div className="flex flex-wrap gap-2">
           <Pill tone="navy">{categoryLabel(contest.category)}</Pill>
-          <Pill>{contest.status}</Pill>
+          <Pill>{statusLabel(contest.status, language)}</Pill>
           {contest.guaranteed && <Pill tone="green">{t('guaranteed')}</Pill>}
           {contest.private && <Pill tone="amber">{t('private')}</Pill>}
-          <Pill tone="orange">{contest.packageName}</Pill>
+          <Pill tone="orange">{packageLabel(contest.packageName, language)}</Pill>
         </div>
         <div className="mt-4 grid gap-6 lg:grid-cols-[1fr_auto]">
           <div>
@@ -61,15 +97,15 @@ export function ContestDetailPage() {
           </div>
           <div className="grid min-w-64 grid-cols-3 gap-3 text-center">
             <div className="rounded-md bg-neutralPanel p-3">
-              <p className="text-xs font-bold text-navy/50">Prize</p>
+              <p className="text-xs font-bold text-navy/50">{text.prize}</p>
               <p className="text-xl font-black">{contest.prize}</p>
             </div>
             <div className="rounded-md bg-neutralPanel p-3">
-              <p className="text-xs font-bold text-navy/50">Entries</p>
+              <p className="text-xs font-bold text-navy/50">{text.entries}</p>
               <p className="text-xl font-black">{contest.entries}</p>
             </div>
             <div className="rounded-md bg-neutralPanel p-3">
-              <p className="text-xs font-bold text-navy/50">Days left</p>
+              <p className="text-xs font-bold text-navy/50">{text.daysLeft}</p>
               <p className="text-xl font-black">{contest.daysLeft}</p>
             </div>
           </div>
@@ -80,12 +116,12 @@ export function ContestDetailPage() {
               className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-contestGreen px-4 py-2 text-sm font-semibold text-white hover:bg-contestGreen/90"
               to={`/contests/${contest.id}/archive`}
             >
-              <CheckCircle2 size={16} /> View archive
+              <CheckCircle2 size={16} /> {text.viewArchive}
             </Link>
           )}
           {contest.status === 'Completed' && winnerEntry && (
             <div className="inline-flex min-h-10 items-center justify-center rounded-md border border-contestGreen/25 bg-mint px-4 py-2 text-sm font-black text-contestGreen">
-              Winner selected: {winnerEntry.title}
+              {text.winnerSelected}: {winnerEntry.title}
             </div>
           )}
           {contest.status !== 'Completed' && (
@@ -109,14 +145,14 @@ export function ContestDetailPage() {
             </Link>
           ) : (
             <div className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-navy/10 px-4 py-2 text-sm font-black text-navy/55">
-              <Send size={16} /> Submissions closed
+              <Send size={16} /> {text.submissionsClosed}
             </div>
           )}
           <Link
             className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-navy/15 bg-white px-4 py-2 text-sm font-semibold text-navy hover:border-contestGreen/60"
             to={`/contests/${contest.id}/compare`}
           >
-            <Columns3 size={16} /> Compare entries
+            <Columns3 size={16} /> {text.compare}
           </Link>
           <Button variant="ghost" onClick={() => setNoticeOpen(true)}>
             {t('developmentNotice')}
@@ -128,11 +164,11 @@ export function ContestDetailPage() {
         <div className="mock-surface rounded-lg p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-black uppercase tracking-wide text-contestGreen">Contest operations</p>
+              <p className="text-sm font-black uppercase tracking-wide text-contestGreen">{text.operations}</p>
               <h2 className="mt-1 text-2xl font-black">{contest.phase}</h2>
             </div>
             <div className="inline-flex items-center gap-2 rounded-md bg-mint px-3 py-2 text-sm font-black text-contestGreen">
-              <Eye size={16} /> {contest.watchers} watchers
+              <Eye size={16} /> {contest.watchers} {text.watchers}
             </div>
           </div>
           <div className="mt-5 grid gap-3 md:grid-cols-2">
@@ -147,7 +183,7 @@ export function ContestDetailPage() {
           </div>
         </div>
         <aside className="mock-surface rounded-lg p-5">
-          <p className="text-sm font-black uppercase tracking-wide text-contestGreen">Submission requirements</p>
+          <p className="text-sm font-black uppercase tracking-wide text-contestGreen">{text.requirements}</p>
           <div className="mt-4 grid gap-2">
             {contest.requirements.map((item) => (
               <div key={item} className="flex gap-2 rounded-md bg-neutralPanel p-3 text-sm font-semibold text-navy/70">
@@ -186,7 +222,7 @@ export function ContestDetailPage() {
                     <Send size={16} /> {t('submitProposal')}
                   </Link>
                 ) : (
-                  <p className="mt-5 rounded-md bg-navy/5 p-3 text-sm font-bold text-navy/60">This contest is no longer accepting new submissions.</p>
+                  <p className="mt-5 rounded-md bg-navy/5 p-3 text-sm font-bold text-navy/60">{text.closedNoEntries}</p>
                 )}
               </div>
             )}
@@ -197,9 +233,9 @@ export function ContestDetailPage() {
 
       {tab === 'briefTab' && (
         <section className="mock-surface mt-6 rounded-lg p-5">
-          <h2 className="text-2xl font-black">Contest brief</h2>
+          <h2 className="text-2xl font-black">{text.brief}</h2>
           <p className="mt-3 text-navy/70">{contestBrief(contest)}</p>
-          <h3 className="mt-6 font-black">Deliverables</h3>
+          <h3 className="mt-6 font-black">{text.deliverables}</h3>
           <ul className="mt-2 grid gap-2">
             {contest.deliverables.map((item) => (
               <li key={item} className="rounded-md bg-neutralPanel p-3 font-semibold">

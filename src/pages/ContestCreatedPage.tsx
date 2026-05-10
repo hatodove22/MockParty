@@ -4,14 +4,47 @@ import { Button } from '../components/common/Button';
 import { useLanguage } from '../i18n/LanguageContext';
 
 export function ContestCreatedPage() {
-  const { t } = useLanguage();
-  const milestones = ['Listing visible to creators', 'Brief quality check complete', 'Invite batch queued', 'First review window opens in 24h'];
-  const receiptItems = [
-    ['Package', 'Standard'],
-    ['Mock prize pool', '$1,400'],
-    ['Review window', '7 days'],
-    ['Expected entries', '12-18'],
-  ];
+  const { language, t } = useLanguage();
+  const copy = {
+    en: {
+      listing: 'Draft marketplace listing',
+      title: 'Salon booking SaaS direction contest',
+      description:
+        'A believable listing preview helps the client understand what creators will see: scope, prize, deadline, expected deliverables, and safety boundaries.',
+      receipt: 'Static receipt',
+      checklist: 'Launch checklist',
+      preview: 'Preview contest dashboard',
+      invite: 'Invite creators',
+      cards: ['Compare the active mock contest listings.', 'Inspect entries, feedback, brief, and safety tabs.', 'Review boundaries for prototype-only work.'],
+      openExample: 'Open example',
+      milestones: ['Listing visible to creators', 'Brief quality check complete', 'Invite batch queued', 'First review window opens in 24h'],
+      receiptItems: [
+        ['Package', 'Standard'],
+        ['Mock prize pool', '$1,400'],
+        ['Review window', '7 days'],
+        ['Expected entries', '12-18'],
+      ],
+    },
+    ja: {
+      listing: '下書きマーケット掲載',
+      title: 'サロン予約SaaS方向性コンテスト',
+      description:
+        'クリエイターに見える範囲、賞金、締切、成果物、安全境界をクライアントが確認できる掲載プレビューです。',
+      receipt: '静的レシート',
+      checklist: '公開チェックリスト',
+      preview: 'コンテスト画面を確認',
+      invite: 'クリエイターを招待',
+      cards: ['開催中のモックコンテスト掲載を比較します。', '応募、フィードバック、依頼内容、安全タブを確認します。', 'プロトタイプ限定作業の境界を確認します。'],
+      openExample: '実例を開く',
+      milestones: ['掲載がクリエイターに表示済み', '依頼品質チェック完了', '招待バッチを準備済み', '24時間後に初回レビュー開始'],
+      receiptItems: [
+        ['パッケージ', 'スタンダード'],
+        ['モック賞金枠', '$1,400'],
+        ['レビュー期間', '7日間'],
+        ['想定応募数', '12-18件'],
+      ],
+    },
+  }[language];
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 lg:px-6">
@@ -34,15 +67,15 @@ export function ContestCreatedPage() {
               <Megaphone size={20} />
             </span>
             <div>
-              <p className="text-sm font-black uppercase tracking-wide text-contestGreen">Draft marketplace listing</p>
-              <h2 className="text-2xl font-black">Salon booking SaaS direction contest</h2>
+              <p className="text-sm font-black uppercase tracking-wide text-contestGreen">{copy.listing}</p>
+              <h2 className="text-2xl font-black">{copy.title}</h2>
             </div>
           </div>
           <p className="mt-4 text-sm font-semibold leading-6 text-navy/65">
-            A believable listing preview helps the client understand what creators will see: scope, prize, deadline, expected deliverables, and safety boundaries.
+            {copy.description}
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {receiptItems.map(([label, value]) => (
+            {copy.receiptItems.map(([label, value]) => (
               <div key={label} className="rounded-md bg-neutralPanel p-3">
                 <p className="text-xs font-black uppercase tracking-wide text-navy/45">{label}</p>
                 <p className="mt-1 text-lg font-black">{value}</p>
@@ -52,12 +85,12 @@ export function ContestCreatedPage() {
           <div className="mt-5 flex flex-wrap gap-2">
             <Link to="/contests/1">
               <Button>
-                <ClipboardList size={16} /> Preview contest dashboard
+                <ClipboardList size={16} /> {copy.preview}
               </Button>
             </Link>
             <Link to="/creators">
               <Button variant="ghost">
-                <Users size={16} /> Invite creators
+                <Users size={16} /> {copy.invite}
               </Button>
             </Link>
           </div>
@@ -69,12 +102,12 @@ export function ContestCreatedPage() {
               <CreditCard size={20} />
             </span>
             <div>
-              <p className="text-sm font-black uppercase tracking-wide text-contestGreen">Static receipt</p>
-              <h2 className="text-2xl font-black">Launch checklist</h2>
+              <p className="text-sm font-black uppercase tracking-wide text-contestGreen">{copy.receipt}</p>
+              <h2 className="text-2xl font-black">{copy.checklist}</h2>
             </div>
           </div>
           <div className="mt-5 grid gap-3">
-            {milestones.map((item) => (
+            {copy.milestones.map((item) => (
               <div key={item} className="flex gap-3 rounded-md bg-neutralPanel p-3 text-sm font-bold text-navy/70">
                 <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-contestGreen" /> {item}
               </div>
@@ -86,16 +119,16 @@ export function ContestCreatedPage() {
       <section className="mt-6 grid gap-4 md:grid-cols-3">
         <Link className="focus-ring rounded-lg border border-navy/10 bg-white p-5 hover:border-orange" to="/contests">
           <h2 className="text-xl font-black">{t('browseContests')}</h2>
-          <p className="mt-2 text-sm font-semibold text-navy/65">Compare the active mock contest listings.</p>
+          <p className="mt-2 text-sm font-semibold text-navy/65">{copy.cards[0]}</p>
           <span className="mt-4 inline-flex items-center gap-2 text-sm font-black text-orange">
             {t('browseContests')} <ArrowRight size={16} />
           </span>
         </Link>
         <Link className="focus-ring rounded-lg border border-navy/10 bg-white p-5 hover:border-orange" to="/contests/1">
           <h2 className="text-xl font-black">{t('viewActiveExample')}</h2>
-          <p className="mt-2 text-sm font-semibold text-navy/65">Inspect entries, feedback, brief, and safety tabs.</p>
+          <p className="mt-2 text-sm font-semibold text-navy/65">{copy.cards[1]}</p>
           <span className="mt-4 inline-flex items-center gap-2 text-sm font-black text-orange">
-            Open example <ArrowRight size={16} />
+            {copy.openExample} <ArrowRight size={16} />
           </span>
         </Link>
         <Link className="focus-ring rounded-lg border border-navy/10 bg-white p-5 hover:border-orange" to="/safety">
@@ -103,7 +136,7 @@ export function ContestCreatedPage() {
             <ShieldCheck size={22} />
           </span>
           <h2 className="text-xl font-black">{t('safety')}</h2>
-          <p className="mt-2 text-sm font-semibold text-navy/65">Review boundaries for prototype-only work.</p>
+          <p className="mt-2 text-sm font-semibold text-navy/65">{copy.cards[2]}</p>
           <span className="mt-4 inline-flex items-center gap-2 text-sm font-black text-orange">
             {t('readSafety')} <ArrowRight size={16} />
           </span>

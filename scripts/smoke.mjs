@@ -38,7 +38,13 @@ const japaneseText = await page.locator('body').innerText();
 if (!japaneseText.includes('複数のUXモック')) {
   failures.push('Japanese homepage copy did not render');
 }
+await page.reload({ waitUntil: 'networkidle' });
+const persistedJapaneseText = await page.locator('body').innerText();
+if (!persistedJapaneseText.includes('複数のUXモック')) {
+  failures.push('Japanese language preference did not persist after reload');
+}
 
+await page.evaluate(() => window.localStorage.setItem('mockcontest-language', 'en'));
 await page.goto(`${baseUrl}/#/contests/1/compare`, { waitUntil: 'networkidle' });
 await page.evaluate(() => window.sessionStorage.clear());
 await page.reload({ waitUntil: 'networkidle' });
@@ -52,6 +58,12 @@ if ((await addToShortlist.count()) > 0) {
   }
 } else {
   failures.push('No add-to-shortlist control found');
+}
+
+await page.goto(`${baseUrl}/#/contests/5/compare`, { waitUntil: 'networkidle' });
+const emptyCompareText = (await page.locator('body').innerText()).toLowerCase();
+if (!emptyCompareText.includes('no entries to compare yet') || !emptyCompareText.includes('submit first proposal')) {
+  failures.push('No-entry comparison state did not render expected content');
 }
 
 await page.setViewportSize({ width: 390, height: 844 });

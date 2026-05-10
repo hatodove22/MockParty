@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import type { Category, Contest } from '../types';
 
 type Language = 'en' | 'ja';
@@ -240,6 +240,10 @@ const contestCopy: Record<Language, Record<number, { title: string; brief: strin
       title: 'B2B AIチャットボット管理画面のUX方向性',
       brief: 'プロンプトライブラリ、レビューキュー、リリース準備チェックの管理画面を比較します。',
     },
+    5: {
+      title: '業務オンボーディングポータルの初期画面モック',
+      brief: '本番ポータルへ進む前に、社内業務オンボーディングの軽量な初期画面を検討します。',
+    },
   },
 };
 
@@ -256,7 +260,14 @@ interface LanguageContextValue {
 const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window === 'undefined') return 'en';
+    return window.localStorage.getItem('mockcontest-language') === 'ja' ? 'ja' : 'en';
+  });
+
+  useEffect(() => {
+    window.localStorage.setItem('mockcontest-language', language);
+  }, [language]);
 
   const value = useMemo<LanguageContextValue>(
     () => ({

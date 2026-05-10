@@ -9,7 +9,7 @@ const briefGuide = {
     items: ['One workflow to compare', 'Target users and device states', 'Examples of what must stay out of scope', 'Synthetic sample content only'],
   },
   ja: {
-    title: '良いモックコンペ依頼に含めるもの',
+    title: '良いモックコンテスト依頼に含めるもの',
     items: ['比較したいワークフローを1つに絞る', '対象ユーザーとデバイス状態を示す', 'スコープ外にする内容を明記する', '合成サンプルだけを使う'],
   },
 } as const;

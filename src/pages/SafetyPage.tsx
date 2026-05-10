@@ -16,6 +16,8 @@ const safetyCopy = {
     checklistTitle: 'Before a brief or entry goes live',
     checklist: ['Synthetic data only', 'No API keys or credentials', 'AI and outside assets disclosed', 'Prototype scope is explicit'],
     policyLinks: ['Prototype terms', 'Privacy boundary'],
+    warning: 'MockContest never represents a contest result as production-ready software.',
+    responsibilitySections,
   },
   ja: {
     title: '安全と責任',
@@ -29,6 +31,25 @@ const safetyCopy = {
     checklistTitle: '依頼や応募を公開する前に',
     checklist: ['合成データのみ', 'APIキーや認証情報なし', 'AIと外部素材を開示', 'プロトタイプ範囲を明記'],
     policyLinks: ['プロトタイプ規約', 'プライバシー境界'],
+    warning: 'MockContestは、コンテスト結果を本番利用可能なソフトウェアとして扱いません。',
+    responsibilitySections: [
+      {
+        title: 'プラットフォームの責任',
+        items: ['掲載ルール', 'コンテスト運営', '賞金表示', '応募形式のガイド', '通報とモデレーション'],
+      },
+      {
+        title: '比較を支援する機能',
+        items: ['比較スコア', 'AIレビュー要約', 'クライアントフィードバックカード', 'クリエイタープロフィール表示', '制作相談への導線'],
+      },
+      {
+        title: '当事者が責任を持つ範囲',
+        items: ['開発契約', '受入テスト', '保守運用', '本番セキュリティ', '追加開発範囲'],
+      },
+      {
+        title: '対象外',
+        items: ['本番開発保証', '商用リリース保証', '実顧客データの取り扱い', 'APIキー提出', '高リスク規制対象プロジェクト'],
+      },
+    ],
   },
 } as const;
 
@@ -74,7 +95,7 @@ export function SafetyPage() {
           </div>
           <div className="mt-5 flex gap-2 rounded-md bg-amber-400/10 p-3 text-sm font-semibold text-amber-100">
             <AlertTriangle size={18} className="shrink-0" />
-            <p>MockContest never represents a contest result as production-ready software.</p>
+            <p>{text.warning}</p>
           </div>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             <Link className="focus-ring rounded-md bg-white px-3 py-2 text-center text-sm font-black text-navy hover:bg-mint" to="/terms">
@@ -87,7 +108,7 @@ export function SafetyPage() {
         </aside>
       </section>
       <section className="mt-8 grid gap-4 md:grid-cols-2">
-        {responsibilitySections.map((section) => (
+        {text.responsibilitySections.map((section) => (
           <article key={section.title} className="mock-surface rounded-lg p-5">
             <h2 className="text-xl font-black">{section.title}</h2>
             <ul className="mt-4 grid gap-2">

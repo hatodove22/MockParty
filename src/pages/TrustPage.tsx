@@ -43,7 +43,7 @@ export function TrustPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 lg:px-6">
       <Link className="mb-5 inline-flex items-center gap-2 text-sm font-bold text-navy/65 hover:text-orange" to="/safety">
-        <ArrowLeft size={16} /> Back to safety
+        <ArrowLeft size={16} /> {language === 'ja' ? '安全ページへ戻る' : 'Back to safety'}
       </Link>
       <section className="mock-surface rounded-lg p-6">
         <div className="flex items-start gap-4">

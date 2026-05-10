@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, FileImage, Pencil, ShieldCheck, Star } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from '../components/common/Button';
 import { Pill } from '../components/common/Pill';
 import { entries } from '../data/entries';
@@ -7,6 +8,7 @@ import { contests } from '../data/contests';
 import { creatorSlug } from '../utils/creatorSlug';
 
 export function CreatorProfilePage() {
+  const [editing, setEditing] = useState(false);
   const { creatorSlug: slug } = useParams();
   const creatorEntries = entries.filter((entry) => creatorSlug(entry.creator) === slug);
   const creator = creatorEntries[0]?.creator;
@@ -54,12 +56,25 @@ export function CreatorProfilePage() {
               <p className="text-xs font-bold text-navy/50">Avg. score</p>
               <p className="mt-1 text-3xl font-black text-orange">{averageScore}</p>
             </div>
-            <button className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-navy/15 bg-white px-4 py-2 text-sm font-semibold text-navy hover:border-orange/60">
+            <button
+              className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-navy/15 bg-white px-4 py-2 text-sm font-semibold text-navy hover:border-orange/60"
+              onClick={() => setEditing((current) => !current)}
+              aria-pressed={editing}
+            >
               <Pencil size={16} /> Edit mock profile
             </button>
           </div>
         </div>
       </section>
+      {editing && (
+        <section className="mt-6 rounded-lg border border-orange/25 bg-orange/5 p-5">
+          <p className="text-sm font-black uppercase tracking-wide text-orange">Mock edit mode</p>
+          <h2 className="mt-2 text-2xl font-black">Profile editing preview</h2>
+          <p className="mt-2 text-sm font-semibold leading-6 text-navy/65">
+            This static state shows where portfolio uploads, AI disclosure, availability, and rights preferences would be edited in a real account area.
+          </p>
+        </section>
+      )}
       <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_360px]">
         <div className="mock-surface rounded-lg p-5">
           <p className="text-sm font-black uppercase tracking-wide text-contestGreen">Portfolio setup</p>
@@ -106,7 +121,7 @@ export function CreatorProfilePage() {
           const contest = contests.find((item) => item.id === entry.contestId);
           return (
             <article key={entry.id} className="mock-surface grid gap-4 rounded-lg p-4 md:grid-cols-[120px_1fr_auto] md:items-center">
-              {contest && <img className="h-24 w-full rounded-md object-cover md:w-28" src={contest.thumbnail} alt="" />}
+              {contest && <img className="h-24 w-full rounded-md object-cover md:w-28" src={contest.thumbnail} alt={`${contest.title} thumbnail`} />}
               <div>
                 <div className="flex flex-wrap gap-2">
                   {entry.winner && <Pill tone="emerald">Winner</Pill>}
