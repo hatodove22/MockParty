@@ -1,8 +1,12 @@
 import { Star } from 'lucide-react';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export function RatingStars({ rating }: { rating: number }) {
+  const { language } = useLanguage();
+  const label = language === 'ja' ? `5段階中${rating}の評価` : `${rating} of 5 stars`;
+
   return (
-    <div className="flex gap-0.5" aria-label={`${rating} of 5 stars`}>
+    <div className="flex gap-0.5" aria-label={label}>
       {Array.from({ length: 5 }, (_, index) => (
         <Star
           key={index}

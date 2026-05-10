@@ -193,6 +193,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
             key={label}
             className={`focus-ring rounded-md px-3 py-2 text-sm font-bold ${step === index ? 'bg-navy text-white' : 'bg-neutralPanel text-navy/70'}`}
             onClick={() => goToStep(index)}
+            aria-current={step === index ? 'step' : undefined}
           >
             {index + 1}. {label}
           </button>
@@ -219,6 +220,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
                 setCategory(item);
                 setError('');
               }}
+              aria-pressed={category === item}
             >
               {categoryLabel(item)}
             </button>
@@ -238,6 +240,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
                 setSelectedPackageName(pack.name);
                 setError('');
               }}
+              aria-pressed={selectedPackageName === pack.name}
             >
               {pack.recommended && <Pill tone="orange">{packageText.recommended}</Pill>}
               <h3 className="mt-3 text-xl font-black">{packageText[pack.name].name}</h3>
