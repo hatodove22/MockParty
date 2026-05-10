@@ -4,6 +4,7 @@ import { cn } from '../../utils/cn';
 const toneClasses = {
   navy: 'bg-navy/10 text-navy',
   orange: 'bg-orange/10 text-orange',
+  green: 'bg-contestGreen/10 text-contestGreen',
   emerald: 'bg-emerald-100 text-emerald-800',
   amber: 'bg-amber-100 text-amber-800',
   rose: 'bg-rose-100 text-rose-800',

@@ -23,6 +23,7 @@ export interface Contest {
   featured: boolean;
   client: string;
   color: string;
+  thumbnail: string;
   brief: string;
   deliverables: string[];
 }
@@ -41,6 +42,10 @@ export interface Entry {
   tags: string[];
   gradient: string;
   review: string;
+  submittedAt: string;
+  summary: string;
+  reviewCriteria: string[];
+  discussion: string[];
 }
 
 export interface ContestPackage {

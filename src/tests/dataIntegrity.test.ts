@@ -30,6 +30,14 @@ describe('MockContest static data', () => {
     expect(contests.every((contest) => categories.includes(contest.category))).toBe(true);
   });
 
+  it('keeps entries attached to real contests with detail copy', () => {
+    const contestIds = new Set(contests.map((contest) => contest.id));
+    expect(entries.every((entry) => contestIds.has(entry.contestId))).toBe(true);
+    expect(entries.every((entry) => entry.summary.length > 20)).toBe(true);
+    expect(entries.every((entry) => entry.reviewCriteria.length >= 3)).toBe(true);
+    expect(entries.every((entry) => entry.discussion.length >= 2)).toBe(true);
+  });
+
   it('blocks production development purpose and defines responsibility boundaries', () => {
     expect(canAdvancePurpose(blockedPurpose)).toBe(false);
     expect(responsibilitySections).toHaveLength(4);

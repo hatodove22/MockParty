@@ -1,25 +1,28 @@
 import { Link, NavLink } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
+import { Languages, Sparkles } from 'lucide-react';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { Button } from '../common/Button';
 
-const navItems = [
-  ['Start contest', '/'],
-  ['Browse contests', '/contests'],
-  ['Active example', '/contests/1'],
-  ['Safety', '/safety'],
-];
+export function Header() {
+  const { t, toggleLanguage } = useLanguage();
+  const navItems = [
+    [t('browseContests'), '/contests'],
+    [t('creators'), '/creators'],
+    [t('activeExample'), '/contests/1'],
+    [t('safety'), '/safety'],
+    [t('openContest'), '/contests/new'],
+  ];
 
-export function Header({ onOpenWizard }: { onOpenWizard: () => void }) {
   return (
     <header className="sticky top-0 z-40 border-b border-navy/10 bg-warm/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 lg:px-6">
         <Link to="/" className="flex shrink-0 items-center gap-3">
-          <span className="grid size-10 place-items-center rounded-md bg-navy text-white">
+          <span className="grid size-10 place-items-center rounded-md bg-contestGreen text-white">
             <Sparkles size={19} />
           </span>
           <span>
             <span className="block text-base font-black leading-tight">MockContest</span>
-            <span className="block text-xs font-semibold text-navy/55">AI UX mock contests</span>
+            <span className="block text-xs font-semibold text-navy/55">{t('brandTagline')}</span>
           </span>
         </Link>
         <nav className="flex flex-1 gap-1 overflow-x-auto text-sm font-semibold">
@@ -35,12 +38,22 @@ export function Header({ onOpenWizard }: { onOpenWizard: () => void }) {
             </NavLink>
           ))}
         </nav>
-        <div className="hidden gap-2 md:flex">
+        <div className="hidden gap-2 lg:flex">
+          <Button variant="ghost" onClick={toggleLanguage}>
+            <Languages size={16} /> {t('language')}
+          </Button>
           <Link to="/creators">
-            <Button variant="ghost">Creator registration</Button>
+            <Button variant="ghost">{t('creatorRegistration')}</Button>
           </Link>
-          <Button onClick={onOpenWizard}>Open contest</Button>
+          <Link to="/contests/new">
+            <Button>{t('openContest')}</Button>
+          </Link>
         </div>
+      </div>
+      <div className="mx-auto flex max-w-7xl justify-end px-4 pb-3 lg:hidden">
+        <Button variant="ghost" onClick={toggleLanguage}>
+          <Languages size={16} /> {t('language')}
+        </Button>
       </div>
     </header>
   );

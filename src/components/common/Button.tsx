@@ -4,9 +4,9 @@ import { cn } from '../../utils/cn';
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-orange text-white hover:bg-orange/90',
+  primary: 'bg-contestGreen text-white hover:bg-contestGreen/90',
   secondary: 'bg-navy text-white hover:bg-navy/90',
-  ghost: 'bg-white text-navy border border-navy/15 hover:border-orange/60',
+  ghost: 'bg-white text-navy border border-navy/15 hover:border-contestGreen/60',
   danger: 'bg-rose-600 text-white hover:bg-rose-700',
 };
 

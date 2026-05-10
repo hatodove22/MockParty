@@ -1,10 +1,14 @@
 import { MessageSquare, MousePointerClick } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import type { Entry } from '../../types';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { Button } from '../common/Button';
 import { Pill } from '../common/Pill';
 import { RatingStars } from '../common/RatingStars';
 
 export function EntryInspector({ entry, onNotice }: { entry: Entry; onNotice: () => void }) {
+  const { t } = useLanguage();
+
   return (
     <aside className="mock-surface sticky top-24 rounded-lg p-5">
       <div className="flex flex-wrap gap-2">
@@ -31,11 +35,20 @@ export function EntryInspector({ entry, onNotice }: { entry: Entry; onNotice: ()
         <span>{entry.views} views</span>
       </div>
       <div className="mt-5 grid gap-2">
-        <Button onClick={onNotice}>
-          <MousePointerClick size={16} /> Select as winner
-        </Button>
+        <Link
+          className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white hover:bg-orange/90"
+          to={`/contests/${entry.contestId}/winner-review/${entry.id}`}
+        >
+          <MousePointerClick size={16} /> {t('selectAsWinner')}
+        </Link>
+        <Link
+          className="focus-ring inline-flex min-h-10 items-center justify-center rounded-md border border-navy/15 bg-white px-4 py-2 text-sm font-semibold text-navy hover:border-orange/60"
+          to={`/contests/${entry.contestId}/entries/${entry.id}`}
+        >
+          {t('viewEntryDetails')}
+        </Link>
         <Button variant="ghost" onClick={onNotice}>
-          View development notice
+          {t('developmentNotice')}
         </Button>
       </div>
     </aside>

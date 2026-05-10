@@ -1,5 +1,6 @@
 import type { Category } from '../../types';
 import { categories } from '../../data/categories';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { Button } from '../common/Button';
 
 export function CategoryRail({
@@ -9,6 +10,8 @@ export function CategoryRail({
   selected: Category | 'All';
   onSelect: (category: Category | 'All') => void;
 }) {
+  const { categoryLabel } = useLanguage();
+
   return (
     <div className="flex gap-2 overflow-x-auto pb-1">
       {(['All', ...categories] as Array<Category | 'All'>).map((category) => (
@@ -18,7 +21,7 @@ export function CategoryRail({
           className="shrink-0"
           onClick={() => onSelect(category)}
         >
-          {category}
+          {categoryLabel(category)}
         </Button>
       ))}
     </div>

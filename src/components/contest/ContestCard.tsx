@@ -1,40 +1,51 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Clock, Users } from 'lucide-react';
 import type { Contest } from '../../types';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { Pill } from '../common/Pill';
 
 export function ContestCard({ contest }: { contest: Contest }) {
+  const { categoryLabel, contestBrief, contestTitle, t } = useLanguage();
+  const packageName = contest.prize === '$2,400' ? 'Premium' : contest.prize === '$900' ? 'Starter' : contest.prize === '$1,800' ? 'Premium' : 'Standard';
+
   return (
-    <article className="mock-surface grid gap-4 rounded-lg p-4 transition hover:-translate-y-0.5 hover:shadow-soft md:grid-cols-[120px_1fr_auto]">
-      <div className={`min-h-28 rounded-md bg-gradient-to-br ${contest.color} p-3 text-white`}>
-        <div className="h-full rounded-md border border-white/40 bg-white/20 p-2">
-          <div className="h-3 w-16 rounded bg-white/80" />
-          <div className="mt-3 h-14 rounded bg-white/35" />
-        </div>
+    <article className="grid gap-4 border-b border-navy/10 bg-white p-4 transition hover:bg-mint/45 md:grid-cols-[132px_1fr_170px]">
+      <div className="overflow-hidden rounded-md bg-white shadow-sm">
+        <img
+          className="h-full min-h-28 w-full object-cover"
+          src={contest.thumbnail}
+          alt=""
+          loading="lazy"
+        />
       </div>
       <div>
         <div className="mb-2 flex flex-wrap gap-2">
-          <Pill tone="navy">{contest.category}</Pill>
-          {contest.guaranteed && <Pill tone="emerald">Guaranteed</Pill>}
-          {contest.private && <Pill tone="amber">Private</Pill>}
-          {contest.featured && <Pill tone="orange">Featured</Pill>}
+          <Pill tone="navy">{categoryLabel(contest.category)}</Pill>
+          {contest.guaranteed && <Pill tone="green">{t('guaranteed')}</Pill>}
+          {contest.private && <Pill tone="amber">{t('private')}</Pill>}
+          {contest.featured && <Pill tone="orange">{t('featured')}</Pill>}
+          <Pill>{t('noGenAi')}</Pill>
         </div>
-        <h3 className="text-lg font-black">{contest.title}</h3>
-        <p className="mt-2 text-sm leading-6 text-navy/65">{contest.brief}</p>
+        <h3 className="text-lg font-black">{contestTitle(contest)}</h3>
+        <p className="mt-2 text-sm leading-6 text-navy/65">{contestBrief(contest)}</p>
         <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold text-navy/65">
           <span className="inline-flex items-center gap-1">
-            <Users size={16} /> {contest.creators} creators
+            <Users size={16} /> {contest.creators} {t('creatorsCount')}
           </span>
           <span className="inline-flex items-center gap-1">
-            <Clock size={16} /> {contest.daysLeft} days left
+            <Clock size={16} /> {contest.daysLeft} {t('daysLeft')}
           </span>
-          <span>{contest.entries} entries</span>
+          <span>{contest.entries} {t('designs')}</span>
         </div>
       </div>
-      <div className="flex min-w-32 flex-col justify-between gap-3 md:items-end">
-        <span className="text-xl font-black">{contest.prize}</span>
-        <Link className="focus-ring inline-flex items-center gap-2 rounded-md bg-navy px-3 py-2 text-sm font-bold text-white" to={`/contests/${contest.id}`}>
-          View details <ArrowRight size={16} />
+      <div className="flex min-w-32 flex-col justify-between gap-3 rounded-md bg-neutralPanel p-3 md:items-end">
+        <div className="md:text-right">
+          <span className="block text-xl font-black">{contest.prize}</span>
+          <span className="mt-1 block text-xs font-bold text-navy/55">{packageName} {t('packagePurchased')}</span>
+          <span className="block text-xs text-navy/45">({t('includingFees')})</span>
+        </div>
+        <Link className="focus-ring inline-flex items-center justify-center gap-2 rounded-md bg-navy px-3 py-2 text-sm font-bold text-white" to={`/contests/${contest.id}`}>
+          {t('viewDetails')} <ArrowRight size={16} />
         </Link>
       </div>
     </article>
