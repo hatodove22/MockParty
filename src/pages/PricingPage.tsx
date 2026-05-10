@@ -12,19 +12,36 @@ const copy = {
     faqTitle: 'What the price does not include',
     faq: ['Production development', 'Maintenance or security guarantee', 'Commercial release acceptance testing', 'Handling real customer data'],
     start: 'Start with this package',
+    perPackage: 'Package scope',
   },
   ja: {
-    title: 'UXモックコンペの料金',
-    copy: '作成前にパッケージを見せることで、想定応募数、レビュー期間、プロトタイプ限定の範囲を揃えます。',
+    title: 'UXモックコンテストの料金',
+    copy: '作成前にパッケージを確認できるため、想定応募数、レビュー期間、プロトタイプ限定の責任範囲を揃えられます。',
     faqTitle: '料金に含まれないもの',
     faq: ['本番開発', '保守やセキュリティ保証', '商用リリースの受入テスト', '実顧客データの取り扱い'],
     start: 'このパッケージで開始',
+    perPackage: 'パッケージ範囲',
+  },
+} as const;
+const packageCopy = {
+  en: {
+    Starter: { name: 'Starter', entries: '3-5 entries', days: '5 days', description: 'Best for a quick direction check before deeper design work.', features: ['Public brief', 'Basic comparison', 'Creator notes'] },
+    Standard: { name: 'Standard', entries: '5-8 entries', days: '7 days', description: 'Recommended for serious UX exploration with clearer feedback.', features: ['Guaranteed prize', 'Feedback cards', 'Finalist shortlist'] },
+    Premium: { name: 'Premium', entries: '8-12 entries', days: '10 days', description: 'For complex flows and multiple screen-state comparisons.', features: ['Featured listing', 'Private option', 'Review summary'] },
+    recommended: 'Recommended',
+  },
+  ja: {
+    Starter: { name: 'スターター', entries: '3-5件の応募', days: '5日間', description: '深いデザイン作業の前に、方向性を素早く確認するためのプランです。', features: ['公開ブリーフ', '基本比較', 'クリエイターノート'] },
+    Standard: { name: 'スタンダード', entries: '5-8件の応募', days: '7日間', description: 'より明確なフィードバックを含む、本格的なUX探索に向いた推奨プランです。', features: ['賞金保証', 'フィードバックカード', 'ファイナリスト候補'] },
+    Premium: { name: 'プレミアム', entries: '8-12件の応募', days: '10日間', description: '複雑なフローや複数の画面状態を比較するためのプランです。', features: ['注目掲載', '非公開オプション', 'レビュー要約'] },
+    recommended: 'おすすめ',
   },
 } as const;
 
 export function PricingPage() {
   const { language } = useLanguage();
   const text = copy[language];
+  const packageText = packageCopy[language];
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 lg:px-6">
@@ -36,15 +53,16 @@ export function PricingPage() {
       <section className="mt-8 grid gap-4 md:grid-cols-3">
         {packages.map((pack) => (
           <article key={pack.name} className={`rounded-lg border bg-white p-5 ${pack.recommended ? 'border-contestGreen shadow-soft' : 'border-navy/10'}`}>
-            {pack.recommended && <Pill tone="green">Recommended</Pill>}
-            <h2 className="mt-3 text-2xl font-black">{pack.name}</h2>
+            {pack.recommended && <Pill tone="green">{packageText.recommended}</Pill>}
+            <p className="text-xs font-black uppercase tracking-wide text-navy/45">{text.perPackage}</p>
+            <h2 className="mt-3 text-2xl font-black">{packageText[pack.name].name}</h2>
             <p className="mt-2 text-4xl font-black">{pack.price}</p>
             <p className="mt-1 text-sm font-bold text-navy/55">
-              {pack.entries} · {pack.days}
+              {packageText[pack.name].entries} / {packageText[pack.name].days}
             </p>
-            <p className="mt-4 leading-7 text-navy/65">{pack.description}</p>
+            <p className="mt-4 leading-7 text-navy/65">{packageText[pack.name].description}</p>
             <ul className="mt-5 grid gap-2">
-              {pack.features.map((feature) => (
+              {packageText[pack.name].features.map((feature) => (
                 <li key={feature} className="flex gap-2 text-sm font-semibold text-navy/70">
                   <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-contestGreen" /> {feature}
                 </li>

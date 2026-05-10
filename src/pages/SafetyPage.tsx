@@ -1,4 +1,5 @@
 import { AlertTriangle, CheckCircle2, Flag, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { responsibilitySections, safetyNotice } from '../data/responsibility';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -14,6 +15,7 @@ const safetyCopy = {
     ],
     checklistTitle: 'Before a brief or entry goes live',
     checklist: ['Synthetic data only', 'No API keys or credentials', 'AI and outside assets disclosed', 'Prototype scope is explicit'],
+    policyLinks: ['Prototype terms', 'Privacy boundary'],
   },
   ja: {
     title: '安全と責任',
@@ -26,6 +28,7 @@ const safetyCopy = {
     ],
     checklistTitle: '依頼や応募を公開する前に',
     checklist: ['合成データのみ', 'APIキーや認証情報なし', 'AIと外部素材を開示', 'プロトタイプ範囲を明記'],
+    policyLinks: ['プロトタイプ規約', 'プライバシー境界'],
   },
 } as const;
 
@@ -72,6 +75,14 @@ export function SafetyPage() {
           <div className="mt-5 flex gap-2 rounded-md bg-amber-400/10 p-3 text-sm font-semibold text-amber-100">
             <AlertTriangle size={18} className="shrink-0" />
             <p>MockContest never represents a contest result as production-ready software.</p>
+          </div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            <Link className="focus-ring rounded-md bg-white px-3 py-2 text-center text-sm font-black text-navy hover:bg-mint" to="/terms">
+              {text.policyLinks[0]}
+            </Link>
+            <Link className="focus-ring rounded-md bg-white px-3 py-2 text-center text-sm font-black text-navy hover:bg-mint" to="/privacy">
+              {text.policyLinks[1]}
+            </Link>
           </div>
         </aside>
       </section>

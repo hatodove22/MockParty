@@ -1,0 +1,71 @@
+import { chromium } from 'playwright';
+
+const baseUrl = process.env.SMOKE_BASE_URL ?? 'http://127.0.0.1:4178';
+const checks = [
+  ['/', 'get dozens of ux mockups'],
+  ['/#/pricing', 'pricing for ux mock contests'],
+  ['/#/contests/3', 'finalist review'],
+  ['/#/contests/3/submit', 'submissions closed'],
+  ['/#/contests/2', 'winner selected'],
+  ['/#/contests/1/compare', 'comparison matrix'],
+  ['/#/contests/1/entries/101', 'annotated screen notes'],
+  ['/#/contests/new/success', 'draft marketplace listing'],
+  ['/#/terms', 'prototype marketplace terms'],
+  ['/#/privacy', 'prototype privacy boundary'],
+  ['/#/safety', 'prototype terms'],
+  ['/#/creators', 'creator verification preview'],
+  ['/#/creators/mika-ux-lab', 'portfolio setup'],
+  ['/#/contests/1/handoff/101', 'static handoff receipt'],
+  ['/#/contests/999', 'contest not found'],
+  ['/#/unknown-route', 'this page is not available'],
+];
+
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+const failures = [];
+
+for (const [path, marker] of checks) {
+  await page.goto(`${baseUrl}${path}`, { waitUntil: 'networkidle' });
+  const text = (await page.locator('body').innerText()).toLowerCase();
+  if (!text.includes(marker)) {
+    failures.push(`${path} missing "${marker}"`);
+  }
+}
+
+await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
+await page.getByRole('button', { name: /Japanese/ }).first().click();
+const japaneseText = await page.locator('body').innerText();
+if (!japaneseText.includes('複数のUXモック')) {
+  failures.push('Japanese homepage copy did not render');
+}
+
+await page.goto(`${baseUrl}/#/contests/1/compare`, { waitUntil: 'networkidle' });
+await page.evaluate(() => window.sessionStorage.clear());
+await page.reload({ waitUntil: 'networkidle' });
+const addToShortlist = page.getByRole('button', { name: /Add to shortlist/ });
+if ((await addToShortlist.count()) > 0) {
+  await addToShortlist.first().click();
+  await page.reload({ waitUntil: 'networkidle' });
+  const persistedText = await page.locator('body').innerText();
+  if (!persistedText.includes('3 entries marked')) {
+    failures.push('Shortlist did not persist after reload');
+  }
+} else {
+  failures.push('No add-to-shortlist control found');
+}
+
+await page.setViewportSize({ width: 390, height: 844 });
+await page.goto(`${baseUrl}/#/contests/1/compare`, { waitUntil: 'networkidle' });
+const mobileText = (await page.locator('body').innerText()).toLowerCase();
+if (!mobileText.includes('comparison matrix') || !mobileText.includes('client shortlist')) {
+  failures.push('Mobile comparison board did not render expected content');
+}
+
+await browser.close();
+
+if (failures.length) {
+  console.error(failures.join('\n'));
+  process.exit(1);
+}
+
+console.log(`Smoke checks passed for ${baseUrl}`);

@@ -5,6 +5,7 @@ import type { Category, ContestPackage } from '../../types';
 import { categories } from '../../data/categories';
 import { packages } from '../../data/packages';
 import { blockedPurpose, canAdvancePurpose } from '../../utils/guards';
+import { useLanguage } from '../../i18n/LanguageContext';
 import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
 import { Pill } from '../common/Pill';
@@ -16,6 +17,20 @@ const safetyItems = [
   'Submitted work is for prototype review and not production use.',
   'Development contracts, acceptance testing, maintenance, and security are handled directly by the parties.',
 ];
+const packageCopy = {
+  en: {
+    Starter: { name: 'Starter', entries: '3-5 entries', days: '5 days', description: 'Best for a quick direction check before deeper design work.' },
+    Standard: { name: 'Standard', entries: '5-8 entries', days: '7 days', description: 'Recommended for serious UX exploration with clearer feedback.' },
+    Premium: { name: 'Premium', entries: '8-12 entries', days: '10 days', description: 'For complex flows and multiple screen-state comparisons.' },
+    recommended: 'Recommended',
+  },
+  ja: {
+    Starter: { name: 'スターター', entries: '3-5件の応募', days: '5日間', description: '深いデザイン作業の前に、方向性を素早く確認するためのプランです。' },
+    Standard: { name: 'スタンダード', entries: '5-8件の応募', days: '7日間', description: 'より明確なフィードバックを含む、本格的なUX探索に向いた推奨プランです。' },
+    Premium: { name: 'プレミアム', entries: '8-12件の応募', days: '10日間', description: '複雑なフローや複数の画面状態を比較するためのプランです。' },
+    recommended: 'おすすめ',
+  },
+} as const;
 
 interface ContestWizardProps {
   open?: boolean;
@@ -41,6 +56,8 @@ function completionError(category: Category | '', selectedPackage: ContestPackag
 }
 
 export function ContestWizard({ open = true, onClose = () => undefined, embedded = false, onComplete }: ContestWizardProps) {
+  const { categoryLabel, language } = useLanguage();
+  const packageText = packageCopy[language];
   const [step, setStep] = useState(0);
   const [category, setCategory] = useState<Category | ''>('');
   const [selectedPackageName, setSelectedPackageName] = useState<ContestPackage['name'] | ''>('');
@@ -120,7 +137,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
                 setError('');
               }}
             >
-              {item}
+              {categoryLabel(item)}
             </button>
           ))}
         </div>
@@ -139,12 +156,12 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
                 setError('');
               }}
             >
-              {pack.recommended && <Pill tone="orange">Recommended</Pill>}
-              <h3 className="mt-3 text-xl font-black">{pack.name}</h3>
+              {pack.recommended && <Pill tone="orange">{packageText.recommended}</Pill>}
+              <h3 className="mt-3 text-xl font-black">{packageText[pack.name].name}</h3>
               <p className="mt-1 text-2xl font-black text-orange">{pack.price}</p>
-              <p className="mt-2 text-sm text-navy/65">{pack.description}</p>
+              <p className="mt-2 text-sm text-navy/65">{packageText[pack.name].description}</p>
               <p className="mt-3 text-xs font-bold text-navy/50">
-                {pack.entries} - {pack.days}
+                {packageText[pack.name].entries} - {packageText[pack.name].days}
               </p>
             </button>
           ))}
@@ -232,12 +249,12 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
           <div className="grid gap-3 md:grid-cols-2">
             <div className="rounded-lg bg-neutralPanel p-4">
               <p className="text-xs font-bold text-navy/50">Category</p>
-              <p className="mt-1 font-black">{category || 'Not selected'}</p>
+              <p className="mt-1 font-black">{category ? categoryLabel(category) : 'Not selected'}</p>
             </div>
             <div className="rounded-lg bg-neutralPanel p-4">
               <p className="text-xs font-bold text-navy/50">Package</p>
               <p className="mt-1 font-black">
-                {selectedPackage ? `${selectedPackage.name} - ${selectedPackage.price}` : 'Not selected'}
+                {selectedPackage ? `${packageText[selectedPackage.name].name} - ${selectedPackage.price}` : 'Not selected'}
               </p>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Star } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, FileImage, Pencil, ShieldCheck, Star } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { Pill } from '../components/common/Pill';
 import { entries } from '../data/entries';
@@ -40,12 +40,54 @@ export function CreatorProfilePage() {
             <Pill tone="green">Verified mock creator</Pill>
             <h1 className="mt-3 text-3xl font-black md:text-5xl">{creator}</h1>
             <p className="mt-2 text-navy/65">Prototype-focused UX proposals with declared AI and asset usage.</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1 rounded-md bg-neutralPanel px-3 py-2 text-sm font-bold text-navy/65">
+                <ShieldCheck size={16} className="text-contestGreen" /> AI disclosure verified
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-md bg-neutralPanel px-3 py-2 text-sm font-bold text-navy/65">
+                <FileImage size={16} className="text-orange" /> Portfolio media ready
+              </span>
+            </div>
           </div>
-          <div className="rounded-lg bg-neutralPanel p-4 text-center">
-            <p className="text-xs font-bold text-navy/50">Avg. score</p>
-            <p className="mt-1 text-3xl font-black text-orange">{averageScore}</p>
+          <div className="grid gap-3">
+            <div className="rounded-lg bg-neutralPanel p-4 text-center">
+              <p className="text-xs font-bold text-navy/50">Avg. score</p>
+              <p className="mt-1 text-3xl font-black text-orange">{averageScore}</p>
+            </div>
+            <button className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-navy/15 bg-white px-4 py-2 text-sm font-semibold text-navy hover:border-orange/60">
+              <Pencil size={16} /> Edit mock profile
+            </button>
           </div>
         </div>
+      </section>
+      <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_360px]">
+        <div className="mock-surface rounded-lg p-5">
+          <p className="text-sm font-black uppercase tracking-wide text-contestGreen">Portfolio setup</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            {['Dashboard mockups', 'Mobile flow samples', 'Review annotations'].map((item, index) => (
+              <div key={item} className={`min-h-32 rounded-md bg-gradient-to-br ${index === 0 ? 'from-orange-200 to-rose-200' : index === 1 ? 'from-mint to-cyan-100' : 'from-amber-100 to-orange-200'} p-3`}>
+                <div className="h-full rounded-md border border-white/70 bg-white/55 p-3">
+                  <div className="h-3 w-20 rounded bg-navy/20" />
+                  <div className="mt-4 grid gap-2">
+                    <div className="h-8 rounded bg-white/70" />
+                    <div className="h-8 rounded bg-navy/10" />
+                  </div>
+                </div>
+                <p className="mt-2 text-sm font-black">{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <aside className="mock-surface rounded-lg p-5">
+          <p className="text-sm font-black uppercase tracking-wide text-contestGreen">Account readiness</p>
+          <div className="mt-4 grid gap-2">
+            {['Public profile complete', 'Synthetic portfolio samples attached', 'Rights handoff checklist acknowledged'].map((item) => (
+              <div key={item} className="flex gap-2 rounded-md bg-neutralPanel p-3 text-sm font-bold text-navy/70">
+                <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-contestGreen" /> {item}
+              </div>
+            ))}
+          </div>
+        </aside>
       </section>
       <section className="mt-6 grid gap-4 md:grid-cols-3">
         {[

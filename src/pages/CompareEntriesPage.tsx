@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Columns3, MessageSquare } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Columns3, MessageSquare, PlusCircle } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { Pill } from '../components/common/Pill';
 import { RatingStars } from '../components/common/RatingStars';
@@ -12,9 +12,27 @@ export function CompareEntriesPage() {
   const { contestId } = useParams();
   const { contestBrief, contestTitle } = useLanguage();
   const contest = contests.find((item) => item.id === Number(contestId));
-  const contestEntries = contest ? entries.filter((entry) => entry.contestId === contest.id).slice(0, 3) : [];
+  const contestEntries = contest ? entries.filter((entry) => entry.contestId === contest.id) : [];
   const initialShortlist = useMemo(() => contestEntries.filter((entry) => entry.finalist).map((entry) => entry.id), [contestEntries]);
-  const [shortlist, setShortlist] = useState<number[]>(initialShortlist);
+  const shortlistKey = contest ? `mockcontest-shortlist-${contest.id}` : '';
+  const [shortlist, setShortlist] = useState<number[]>(() => {
+    if (!contest) return [];
+    const saved = window.sessionStorage.getItem(`mockcontest-shortlist-${contest.id}`);
+    if (!saved) return initialShortlist;
+    try {
+      const parsed = JSON.parse(saved) as number[];
+      const validIds = new Set(contestEntries.map((entry) => entry.id));
+      return parsed.filter((id) => validIds.has(id));
+    } catch {
+      return initialShortlist;
+    }
+  });
+
+  useEffect(() => {
+    if (shortlistKey) {
+      window.sessionStorage.setItem(shortlistKey, JSON.stringify(shortlist));
+    }
+  }, [shortlist, shortlistKey]);
 
   if (!contest) {
     return (
@@ -59,6 +77,11 @@ export function CompareEntriesPage() {
             <Button disabled={shortlist.length === 0}>Review top shortlist</Button>
           </Link>
         </div>
+        {shortlist.length === 0 && (
+          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-900">
+            No entries are shortlisted. Add at least one design before starting winner review.
+          </div>
+        )}
         <div className="grid gap-4 lg:grid-cols-3">
           {contestEntries.map((entry) => (
             <article key={entry.id} className="mock-surface rounded-lg p-4">
@@ -81,6 +104,14 @@ export function CompareEntriesPage() {
                   <div className="mt-2">
                     <RatingStars rating={entry.rating} />
                   </div>
+                </div>
+                <div className="rounded-md bg-neutralPanel p-3">
+                  <p className="text-xs font-bold text-navy/50">Comments</p>
+                  <p className="text-2xl font-black">{entry.comments}</p>
+                </div>
+                <div className="rounded-md bg-neutralPanel p-3">
+                  <p className="text-xs font-bold text-navy/50">Views</p>
+                  <p className="text-2xl font-black">{entry.views}</p>
                 </div>
               </div>
               <p className="mt-4 text-sm leading-6 text-navy/70">{entry.summary}</p>
@@ -108,11 +139,46 @@ export function CompareEntriesPage() {
                   )
                 }
               >
-                {shortlist.includes(entry.id) ? 'Shortlisted' : 'Add to shortlist'}
+                {shortlist.includes(entry.id) ? (
+                  <>
+                    <CheckCircle2 size={16} /> Shortlisted
+                  </>
+                ) : (
+                  <>
+                    <PlusCircle size={16} /> Add to shortlist
+                  </>
+                )}
               </Button>
             </article>
           ))}
         </div>
+        <section className="mock-surface mt-6 rounded-lg p-5">
+          <p className="text-sm font-black uppercase tracking-wide text-contestGreen">Comparison matrix</p>
+          <div className="mt-4 overflow-x-auto">
+            <table className="min-w-[720px] w-full text-left text-sm">
+              <thead className="text-xs uppercase tracking-wide text-navy/45">
+                <tr>
+                  <th className="py-2 pr-3">Entry</th>
+                  <th className="py-2 pr-3">Creator</th>
+                  <th className="py-2 pr-3">Score</th>
+                  <th className="py-2 pr-3">Status</th>
+                  <th className="py-2 pr-3">Best use</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-navy/10">
+                {contestEntries.map((entry) => (
+                  <tr key={entry.id}>
+                    <td className="py-3 pr-3 font-black">{entry.title}</td>
+                    <td className="py-3 pr-3 font-semibold text-navy/65">{entry.creator}</td>
+                    <td className="py-3 pr-3 font-black text-orange">{entry.score}</td>
+                    <td className="py-3 pr-3 font-semibold">{entry.winner ? 'Winner' : entry.finalist ? 'Finalist' : shortlist.includes(entry.id) ? 'Shortlisted' : 'Hold'}</td>
+                    <td className="py-3 pr-3 text-navy/65">{entry.tags.slice(0, 2).join(' / ')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </section>
     </main>
   );

@@ -53,10 +53,25 @@ const copy = {
 } as const;
 
 const icons = [ClipboardCheck, Users, Trophy];
+const packageCopy = {
+  en: {
+    Starter: { name: 'Starter', entries: '3-5 entries', days: '5 days', description: 'Best for a quick direction check before deeper design work.', features: ['Public brief', 'Basic comparison', 'Creator notes'] },
+    Standard: { name: 'Standard', entries: '5-8 entries', days: '7 days', description: 'Recommended for serious UX exploration with clearer feedback.', features: ['Guaranteed prize', 'Feedback cards', 'Finalist shortlist'] },
+    Premium: { name: 'Premium', entries: '8-12 entries', days: '10 days', description: 'For complex flows and multiple screen-state comparisons.', features: ['Featured listing', 'Private option', 'Review summary'] },
+    recommended: 'Recommended',
+  },
+  ja: {
+    Starter: { name: 'スターター', entries: '3-5件の応募', days: '5日間', description: '深いデザイン作業の前に、方向性を素早く確認するためのプランです。', features: ['公開ブリーフ', '基本比較', 'クリエイターノート'] },
+    Standard: { name: 'スタンダード', entries: '5-8件の応募', days: '7日間', description: 'より明確なフィードバックを含む、本格的なUX探索に向いた推奨プランです。', features: ['賞金保証', 'フィードバックカード', 'ファイナリスト候補'] },
+    Premium: { name: 'プレミアム', entries: '8-12件の応募', days: '10日間', description: '複雑なフローや複数の画面状態を比較するためのプランです。', features: ['注目掲載', '非公開オプション', 'レビュー要約'] },
+    recommended: 'おすすめ',
+  },
+} as const;
 
 export function MarketplaceSections() {
   const { language } = useLanguage();
   const text = copy[language];
+  const packageText = packageCopy[language];
 
   return (
     <>
@@ -95,15 +110,15 @@ export function MarketplaceSections() {
           <div className="grid gap-4 md:grid-cols-3">
             {packages.map((pack) => (
               <article key={pack.name} className={`rounded-lg border bg-white p-5 ${pack.recommended ? 'border-contestGreen shadow-soft' : 'border-navy/10'}`}>
-                {pack.recommended && <Pill tone="green">Recommended</Pill>}
-                <h3 className="mt-3 text-xl font-black">{pack.name}</h3>
+                {pack.recommended && <Pill tone="green">{packageText.recommended}</Pill>}
+                <h3 className="mt-3 text-xl font-black">{packageText[pack.name].name}</h3>
                 <p className="mt-2 text-3xl font-black text-navy">{pack.price}</p>
                 <p className="mt-1 text-sm font-semibold text-navy/55">
-                  {pack.entries} · {pack.days}
+                  {packageText[pack.name].entries} / {packageText[pack.name].days}
                 </p>
-                <p className="mt-3 text-sm leading-6 text-navy/65">{pack.description}</p>
+                <p className="mt-3 text-sm leading-6 text-navy/65">{packageText[pack.name].description}</p>
                 <ul className="mt-4 grid gap-2">
-                  {pack.features.map((feature) => (
+                  {packageText[pack.name].features.map((feature) => (
                     <li key={feature} className="flex gap-2 text-sm font-semibold text-navy/70">
                       <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-contestGreen" /> {feature}
                     </li>

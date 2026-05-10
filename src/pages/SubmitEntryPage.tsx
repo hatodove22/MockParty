@@ -50,6 +50,7 @@ export function SubmitEntryPage() {
     return <NotFoundPanel />;
   }
   const contestIdValue = contest.id;
+  const acceptsSubmissions = contest.status === 'Open';
 
   function toggleCheck(item: string) {
     setChecked((current) => (current.includes(item) ? current.filter((value) => value !== item) : [...current, item]));
@@ -57,6 +58,7 @@ export function SubmitEntryPage() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!acceptsSubmissions) return;
     const nextErrors: Record<string, string> = {};
 
     if (!title.trim()) nextErrors.title = 'Title is required.';
@@ -87,7 +89,27 @@ export function SubmitEntryPage() {
         <h1 className="mt-4 text-3xl font-black md:text-5xl">Submit proposal</h1>
         <p className="mt-3 max-w-3xl text-navy/70">{contest.title}</p>
 
-        <form className="mt-6 grid gap-5" onSubmit={handleSubmit} noValidate>
+        {!acceptsSubmissions && (
+          <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-5">
+            <Pill tone="amber">Submissions closed</Pill>
+            <h2 className="mt-3 text-2xl font-black">
+              {contest.status === 'Completed' ? 'This contest has already selected a winner.' : 'This contest is in finalist review.'}
+            </h2>
+            <p className="mt-2 text-sm font-semibold leading-6 text-navy/65">
+              New entries are locked in this prototype so the lifecycle matches a real design-contest marketplace. You can still inspect entries, compare finalists, or view the archive when available.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Link className="focus-ring inline-flex min-h-10 items-center justify-center rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy/90" to={`/contests/${contest.id}`}>
+                Back to contest
+              </Link>
+              <Link className="focus-ring inline-flex min-h-10 items-center justify-center rounded-md border border-navy/15 bg-white px-4 py-2 text-sm font-semibold text-navy hover:border-orange/60" to={`/contests/${contest.id}/compare`}>
+                Compare entries
+              </Link>
+            </div>
+          </div>
+        )}
+
+        <form className={`mt-6 grid gap-5 ${acceptsSubmissions ? '' : 'pointer-events-none opacity-45'}`} onSubmit={handleSubmit} noValidate aria-disabled={!acceptsSubmissions}>
           <label className="grid gap-2 text-sm font-bold">
             Entry title
             <input className="focus-ring rounded-md border border-navy/15 bg-white px-3 py-2 font-medium" value={title} onChange={(event) => setTitle(event.target.value)} />
@@ -127,7 +149,7 @@ export function SubmitEntryPage() {
             <Link className="focus-ring inline-flex min-h-10 items-center justify-center rounded-md border border-navy/15 bg-white px-4 py-2 text-sm font-semibold text-navy hover:border-orange/60" to={`/contests/${contest.id}`}>
               Cancel
             </Link>
-            <Button type="submit">
+            <Button type="submit" disabled={!acceptsSubmissions}>
               <CheckCircle2 size={16} /> Submit entry
             </Button>
           </div>

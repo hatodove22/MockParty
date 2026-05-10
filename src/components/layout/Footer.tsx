@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 export function Footer() {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
 
   return (
     <footer className="border-t border-navy/10 bg-white">
@@ -18,6 +18,12 @@ export function Footer() {
           </Link>
           <Link className="hover:text-orange" to="/safety">
             {t('realDataProhibited')}
+          </Link>
+          <Link className="hover:text-orange" to="/terms">
+            {language === 'ja' ? '利用規約' : 'Terms'}
+          </Link>
+          <Link className="hover:text-orange" to="/privacy">
+            {language === 'ja' ? 'プライバシー' : 'Privacy'}
           </Link>
           <span className="inline-flex items-center gap-1 text-emerald-700">
             <CheckCircle2 size={16} /> {t('selfTestsPassed')}

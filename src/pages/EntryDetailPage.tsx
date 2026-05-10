@@ -36,6 +36,11 @@ export function EntryDetailPage() {
     ? entry.discussion
     : [`${entry.comments} review comments are available in this static summary.`, `${entry.views} client views recorded for comparison.`];
   const submitted = entry.submittedAt ? new Date(entry.submittedAt).toLocaleDateString() : 'Recently submitted';
+  const annotationPins = [
+    { label: '1', className: 'left-[18%] top-[24%]', note: criteria[0] ?? 'Primary flow clarity' },
+    { label: '2', className: 'left-[52%] top-[48%]', note: criteria[1] ?? 'State comparison' },
+    { label: '3', className: 'right-[12%] bottom-[18%]', note: criteria[2] ?? 'Decision support' },
+  ];
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 lg:px-6">
@@ -55,7 +60,7 @@ export function EntryDetailPage() {
             by {entry.creator}
           </Link>
 
-          <div className={`mt-6 h-72 rounded-lg bg-gradient-to-br ${entry.gradient} p-4`}>
+          <div className={`relative mt-6 h-72 rounded-lg bg-gradient-to-br ${entry.gradient} p-4`}>
             <div className="grid h-full gap-4 rounded-md border border-white/80 bg-white/50 p-4 md:grid-cols-[1fr_180px]">
               <div className="rounded-md bg-white/75 p-4">
                 <div className="h-4 w-32 rounded bg-navy/20" />
@@ -71,7 +76,29 @@ export function EntryDetailPage() {
                 <div className="rounded bg-orange/30" />
               </div>
             </div>
+            {annotationPins.map((pin) => (
+              <div key={pin.label} className={`absolute ${pin.className} group`}>
+                <span className="grid size-8 place-items-center rounded-full bg-orange text-sm font-black text-white shadow-soft ring-4 ring-white/80">
+                  {pin.label}
+                </span>
+                <span className="pointer-events-none absolute left-9 top-0 hidden w-44 rounded-md bg-navy px-3 py-2 text-xs font-bold leading-5 text-white shadow-soft group-hover:block">
+                  {pin.note}
+                </span>
+              </div>
+            ))}
           </div>
+
+          <section className="mt-4 rounded-lg border border-navy/10 bg-white p-4">
+            <h2 className="text-sm font-black uppercase tracking-wide text-contestGreen">Annotated screen notes</h2>
+            <div className="mt-3 grid gap-2 md:grid-cols-3">
+              {annotationPins.map((pin) => (
+                <div key={pin.label} className="flex gap-2 rounded-md bg-neutralPanel p-3 text-sm font-bold text-navy/70">
+                  <span className="grid size-6 shrink-0 place-items-center rounded-full bg-orange text-xs text-white">{pin.label}</span>
+                  {pin.note}
+                </div>
+              ))}
+            </div>
+          </section>
 
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             <div className="rounded-md bg-neutralPanel p-4">

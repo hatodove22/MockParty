@@ -23,6 +23,8 @@ export function ContestDetailPage() {
   const [noticeOpen, setNoticeOpen] = useState(false);
   const selectedEntry = useMemo(() => contestEntries.find((entry) => entry.id === selectedId) ?? contestEntries.find((entry) => entry.winner) ?? contestEntries[0], [contestEntries, selectedId]);
   const reviewEntry = selectedEntry ?? contestEntries.find((entry) => entry.winner);
+  const winnerEntry = contestEntries.find((entry) => entry.winner);
+  const acceptsSubmissions = contest?.status === 'Open';
 
   if (!contest) {
     return (
@@ -81,22 +83,35 @@ export function ContestDetailPage() {
               <CheckCircle2 size={16} /> View archive
             </Link>
           )}
-          {reviewEntry ? (
+          {contest.status === 'Completed' && winnerEntry && (
+            <div className="inline-flex min-h-10 items-center justify-center rounded-md border border-contestGreen/25 bg-mint px-4 py-2 text-sm font-black text-contestGreen">
+              Winner selected: {winnerEntry.title}
+            </div>
+          )}
+          {contest.status !== 'Completed' && (
+            reviewEntry ? (
+              <Link
+                className="focus-ring inline-flex min-h-10 items-center justify-center rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white hover:bg-orange/90"
+                to={`/contests/${contest.id}/winner-review/${reviewEntry.id}`}
+              >
+                {t('consultWinner')}
+              </Link>
+            ) : (
+              <Button disabled>{t('consultWinner')}</Button>
+            )
+          )}
+          {acceptsSubmissions ? (
             <Link
-              className="focus-ring inline-flex min-h-10 items-center justify-center rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white hover:bg-orange/90"
-              to={`/contests/${contest.id}/winner-review/${reviewEntry.id}`}
+              className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy/90"
+              to={`/contests/${contest.id}/submit`}
             >
-              {t('consultWinner')}
+              <Send size={16} /> {t('submitProposal')}
             </Link>
           ) : (
-          <Button disabled>{t('consultWinner')}</Button>
+            <div className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-navy/10 px-4 py-2 text-sm font-black text-navy/55">
+              <Send size={16} /> Submissions closed
+            </div>
           )}
-          <Link
-            className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy/90"
-            to={`/contests/${contest.id}/submit`}
-          >
-            <Send size={16} /> {t('submitProposal')}
-          </Link>
           <Link
             className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-navy/15 bg-white px-4 py-2 text-sm font-semibold text-navy hover:border-contestGreen/60"
             to={`/contests/${contest.id}/compare`}
@@ -163,12 +178,16 @@ export function ContestDetailPage() {
                 <Pill tone="amber">{t('noEntriesYet')}</Pill>
                 <h2 className="mt-3 text-2xl font-black">{t('firstSubmit')}</h2>
                 <p className="mt-2 text-navy/70">{t('noEntriesCopy')}</p>
-                <Link
-                  className="focus-ring mt-5 inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white hover:bg-orange/90"
-                  to={`/contests/${contest.id}/submit`}
-                >
-                  <Send size={16} /> {t('submitProposal')}
-                </Link>
+                {acceptsSubmissions ? (
+                  <Link
+                    className="focus-ring mt-5 inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white hover:bg-orange/90"
+                    to={`/contests/${contest.id}/submit`}
+                  >
+                    <Send size={16} /> {t('submitProposal')}
+                  </Link>
+                ) : (
+                  <p className="mt-5 rounded-md bg-navy/5 p-3 text-sm font-bold text-navy/60">This contest is no longer accepting new submissions.</p>
+                )}
               </div>
             )}
           </div>

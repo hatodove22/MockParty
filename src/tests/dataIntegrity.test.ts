@@ -49,6 +49,13 @@ describe('MockContest static data', () => {
     expect(contests.every((contest) => contest.requirements.length >= 3)).toBe(true);
   });
 
+  it('covers open, finalist, and completed contest lifecycle states', () => {
+    expect(contests.some((contest) => contest.status === 'Open')).toBe(true);
+    expect(contests.some((contest) => contest.status === 'Finalist')).toBe(true);
+    expect(contests.some((contest) => contest.status === 'Completed')).toBe(true);
+    expect(contests.filter((contest) => contest.status !== 'Open').every((contest) => contest.daysLeft <= 2)).toBe(true);
+  });
+
   it('blocks production development purpose and defines responsibility boundaries', () => {
     expect(canAdvancePurpose(blockedPurpose)).toBe(false);
     expect(responsibilitySections).toHaveLength(4);

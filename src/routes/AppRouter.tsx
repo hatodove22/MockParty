@@ -7,6 +7,7 @@ import { ContestDetailPage } from '../pages/ContestDetailPage';
 import { CreatorPage } from '../pages/CreatorPage';
 import { CreatorProfilePage } from '../pages/CreatorProfilePage';
 import { EntryDetailPage } from '../pages/EntryDetailPage';
+import { HandoffReceiptPage } from '../pages/HandoffReceiptPage';
 import { HomePage } from '../pages/HomePage';
 import { NewContestPage } from '../pages/NewContestPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
@@ -14,6 +15,7 @@ import { PricingPage } from '../pages/PricingPage';
 import { SafetyPage } from '../pages/SafetyPage';
 import { SubmitEntryPage } from '../pages/SubmitEntryPage';
 import { SubmitSuccessPage } from '../pages/SubmitSuccessPage';
+import { TrustPage } from '../pages/TrustPage';
 import { WinnerReviewPage } from '../pages/WinnerReviewPage';
 import { WinnerSuccessPage } from '../pages/WinnerSuccessPage';
 
@@ -32,10 +34,13 @@ export function AppRouter() {
       <Route path="/contests/:contestId/submit/success" element={<SubmitSuccessPage />} />
       <Route path="/contests/:contestId/winner-review/:entryId" element={<WinnerReviewPage />} />
       <Route path="/contests/:contestId/winner-review/:entryId/success" element={<WinnerSuccessPage />} />
+      <Route path="/contests/:contestId/handoff/:entryId" element={<HandoffReceiptPage />} />
       <Route path="/creators" element={<CreatorPage />} />
       <Route path="/creators/:creatorSlug" element={<CreatorProfilePage />} />
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/safety" element={<SafetyPage />} />
+      <Route path="/terms" element={<TrustPage />} />
+      <Route path="/privacy" element={<TrustPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
