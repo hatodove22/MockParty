@@ -6,6 +6,7 @@ import { contests } from '../data/contests';
 import { entries } from '../data/entries';
 import { useLanguage } from '../i18n/LanguageContext';
 import { statusLabel } from '../utils/displayLabels';
+import { entryCriteria, entrySummary, entryTitle } from '../utils/entryDisplay';
 
 const archiveCopy = {
   en: {
@@ -90,10 +91,10 @@ export function ContestArchivePage() {
                 <Pill tone="emerald">{text.winner}</Pill>
                 <Pill>{winner.creator}</Pill>
               </div>
-              <h3 className="mt-3 text-xl font-black">{winner.title}</h3>
-              <p className="mt-2 leading-7 text-navy/70">{winner.summary}</p>
+              <h3 className="mt-3 text-xl font-black">{entryTitle(winner, language)}</h3>
+              <p className="mt-2 leading-7 text-navy/70">{entrySummary(winner, language)}</p>
               <div className="mt-4 grid gap-2 md:grid-cols-3">
-                {winner.reviewCriteria.map((item) => (
+                {entryCriteria(winner, language).map((item) => (
                   <div key={item} className="rounded-md bg-neutralPanel p-3 text-sm font-semibold text-navy/70">
                     {item}
                   </div>

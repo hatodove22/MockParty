@@ -11,6 +11,7 @@ import { EntryCard } from '../components/contest/EntryCard';
 import { EntryInspector } from '../components/contest/EntryInspector';
 import { useLanguage } from '../i18n/LanguageContext';
 import { packageLabel, statusLabel } from '../utils/displayLabels';
+import { entryReview, entryTitle } from '../utils/entryDisplay';
 
 const tabs = ['entriesTab', 'briefTab', 'feedbackTab', 'safetyTab'] as const;
 const detailCopy = {
@@ -250,8 +251,8 @@ export function ContestDetailPage() {
         <section className="mt-6 grid gap-3">
           {contestEntries.slice(0, 3).map((entry) => (
             <div key={entry.id} className="mock-surface rounded-lg p-4">
-              <h3 className="font-black">{entry.title}</h3>
-              <p className="mt-2 text-navy/70">{entry.review}</p>
+              <h3 className="font-black">{entryTitle(entry, language)}</h3>
+              <p className="mt-2 text-navy/70">{entryReview(entry, language)}</p>
             </div>
           ))}
         </section>

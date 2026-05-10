@@ -1,12 +1,12 @@
 import { ArrowLeft, CheckCircle2, MessageSquare, MousePointerClick } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
-import { Button } from '../components/common/Button';
 import { Pill } from '../components/common/Pill';
 import { RatingStars } from '../components/common/RatingStars';
 import { contests } from '../data/contests';
 import { entries } from '../data/entries';
 import { useLanguage } from '../i18n/LanguageContext';
 import { creatorSlug } from '../utils/creatorSlug';
+import { entryCriteria, entryDiscussion, entrySummary, entryTags, entryTitle } from '../utils/entryDisplay';
 import { statusLabel } from '../utils/displayLabels';
 
 const detailCopy = {
@@ -17,6 +17,9 @@ const detailCopy = {
     backToContest: 'Back to contest',
     by: 'by',
     annotated: 'Annotated screen notes',
+    threadTitle: 'Threaded client notes',
+    client: 'Client',
+    creator: 'Creator',
     score: 'Score',
     rating: 'Rating',
     submitted: 'Submitted',
@@ -33,6 +36,8 @@ const detailCopy = {
     boundary: 'This static detail view summarizes prototype comparison signals only. Production build scope, acceptance, security, and support remain separate agreements.',
     fallbackDiscussion: (comments: number, views: number) => [`${comments} review comments are available in this static summary.`, `${views} client views recorded for comparison.`],
     pins: ['Primary flow clarity', 'State comparison', 'Decision support'],
+    winner: 'Winner',
+    finalist: 'Finalist',
   },
   ja: {
     notFound: '応募が見つかりません',
@@ -41,6 +46,9 @@ const detailCopy = {
     backToContest: 'コンテストへ戻る',
     by: '作成',
     annotated: '注釈付き画面メモ',
+    threadTitle: 'クライアントメモのスレッド',
+    client: 'クライアント',
+    creator: 'クリエイター',
     score: 'スコア',
     rating: '評価',
     submitted: '提出日',
@@ -57,6 +65,8 @@ const detailCopy = {
     boundary: 'この静的詳細画面は、プロトタイプ比較の判断材料のみを要約します。本番開発範囲、受入、セキュリティ、サポートは別契約です。',
     fallbackDiscussion: (comments: number, views: number) => [`この静的要約では${comments}件のレビューコメントを確認できます。`, `比較用に${views}回のクライアント表示が記録されています。`],
     pins: ['主要フローの明確さ', '状態比較', '意思決定支援'],
+    winner: '受賞作品',
+    finalist: 'ファイナリスト',
   },
 } as const;
 
@@ -88,14 +98,22 @@ export function EntryDetailPage() {
     return <NotFoundPanel />;
   }
 
-  const criteria = entry.reviewCriteria?.length ? entry.reviewCriteria : entry.tags;
-  const discussion = entry.discussion?.length ? entry.discussion : text.fallbackDiscussion(entry.comments, entry.views);
+  const criteria = entryCriteria(entry, language).length ? entryCriteria(entry, language) : entryTags(entry, language);
+  const discussion = entryDiscussion(entry, language).length ? entryDiscussion(entry, language) : text.fallbackDiscussion(entry.comments, entry.views);
+  const title = entryTitle(entry, language);
   const submitted = entry.submittedAt ? new Date(entry.submittedAt).toLocaleDateString(language === 'ja' ? 'ja-JP' : 'en-US') : text.recent;
   const annotationPins = [
     { label: '1', className: 'left-[18%] top-[24%]', note: criteria[0] ?? text.pins[0] },
     { label: '2', className: 'left-[52%] top-[48%]', note: criteria[1] ?? text.pins[1] },
     { label: '3', className: 'right-[12%] bottom-[18%]', note: criteria[2] ?? text.pins[2] },
   ];
+  const threads = annotationPins.map((pin, index) => ({
+    ...pin,
+    clientNote: discussion[index % discussion.length],
+    creatorReply: language === 'ja'
+      ? `${pin.note}を基準に、次の提出では画面状態と責任範囲をより明確にします。`
+      : `I will clarify the screen state and responsibility boundary around ${pin.note.toLowerCase()} in the next pass.`,
+  }));
   const canReviewWinner = contest.status !== 'Completed';
 
   return (
@@ -108,11 +126,11 @@ export function EntryDetailPage() {
         <article className="mock-surface rounded-lg p-5">
           <div className="flex flex-wrap gap-2">
             <Pill tone="navy">{categoryLabel(contest.category)}</Pill>
-            {entry.winner && <Pill tone="emerald">{language === 'ja' ? '受賞作品' : 'Winner'}</Pill>}
-            {entry.finalist && <Pill tone="amber">{language === 'ja' ? 'ファイナリスト' : 'Finalist'}</Pill>}
+            {entry.winner && <Pill tone="emerald">{text.winner}</Pill>}
+            {entry.finalist && <Pill tone="amber">{text.finalist}</Pill>}
             <Pill>{statusLabel(contest.status, language)}</Pill>
           </div>
-          <h1 className="mt-4 text-3xl font-black md:text-5xl">{entry.title}</h1>
+          <h1 className="mt-4 text-3xl font-black md:text-5xl">{title}</h1>
           <Link className="mt-2 inline-flex font-semibold text-navy/55 hover:text-orange" to={`/creators/${creatorSlug(entry.creator)}`}>
             {text.by} {entry.creator}
           </Link>
@@ -157,6 +175,24 @@ export function EntryDetailPage() {
             </div>
           </section>
 
+          <section className="mt-4 rounded-lg border border-navy/10 bg-white p-4">
+            <h2 className="text-sm font-black uppercase tracking-wide text-contestGreen">{text.threadTitle}</h2>
+            <div className="mt-3 grid gap-3">
+              {threads.map((thread) => (
+                <article key={thread.label} className="rounded-md bg-neutralPanel p-3">
+                  <div className="flex items-center gap-2 text-sm font-black text-navy">
+                    <span className="grid size-6 place-items-center rounded-full bg-orange text-xs text-white">{thread.label}</span>
+                    {thread.note}
+                  </div>
+                  <div className="mt-3 grid gap-2 text-sm leading-6">
+                    <p className="rounded-md bg-white p-3 text-navy/70"><span className="font-black text-navy">{text.client}: </span>{thread.clientNote}</p>
+                    <p className="rounded-md border border-contestGreen/20 bg-mint/70 p-3 text-navy/70"><span className="font-black text-navy">{text.creator}: </span>{thread.creatorReply}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             <div className="rounded-md bg-neutralPanel p-4">
               <p className="text-xs font-bold text-navy/50">{text.score}</p>
@@ -176,7 +212,7 @@ export function EntryDetailPage() {
 
           <section className="mt-6">
             <h2 className="text-xl font-black">{text.summary}</h2>
-            <p className="mt-3 leading-7 text-navy/70">{entry.summary || entry.review}</p>
+            <p className="mt-3 leading-7 text-navy/70">{entrySummary(entry, language)}</p>
           </section>
 
           <section className="mt-6">
@@ -211,7 +247,7 @@ export function EntryDetailPage() {
             <span>{entry.views}{language === 'ja' ? text.views : ` ${text.views}`}</span>
           </div>
           <div className="mt-5 flex flex-wrap gap-2">
-            {entry.tags.map((tag) => (
+            {entryTags(entry, language).map((tag) => (
               <Pill key={tag}>{tag}</Pill>
             ))}
           </div>

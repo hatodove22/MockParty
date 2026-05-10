@@ -4,6 +4,7 @@ import { Pill } from '../components/common/Pill';
 import { contests } from '../data/contests';
 import { entries } from '../data/entries';
 import { useLanguage } from '../i18n/LanguageContext';
+import { entryTitle } from '../utils/entryDisplay';
 
 const winnerSuccessCopy = {
   en: {
@@ -67,7 +68,7 @@ export function WinnerSuccessPage() {
         <Pill tone="emerald">{text.pill}</Pill>
         <h1 className="mt-4 text-3xl font-black">{text.title}</h1>
         <p className="mx-auto mt-3 max-w-xl leading-7 text-navy/70">
-          {text.copy(entry.title, contestTitle(contest))}
+          {text.copy(entryTitle(entry, language), contestTitle(contest))}
         </p>
         <div className="mx-auto mt-6 grid max-w-3xl gap-3 text-left">
           {text.steps.map((item) => (

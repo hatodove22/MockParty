@@ -9,6 +9,7 @@ import { entries } from '../data/entries';
 import { safetyNotice } from '../data/responsibility';
 import { useLanguage } from '../i18n/LanguageContext';
 import { statusLabel } from '../utils/displayLabels';
+import { entrySummary, entryTitle } from '../utils/entryDisplay';
 
 const reviewCopy = {
   en: {
@@ -140,12 +141,12 @@ export function WinnerReviewPage() {
             {entry.finalist && <Pill tone="amber">{text.finalist}</Pill>}
           </div>
           <h1 className="mt-4 text-3xl font-black md:text-5xl">{text.title}</h1>
-          <p className="mt-3 max-w-3xl text-navy/70">{text.intro(entry.title, contestTitle(contest))}</p>
+          <p className="mt-3 max-w-3xl text-navy/70">{text.intro(entryTitle(entry, language), contestTitle(contest))}</p>
 
           <article className="mt-6 rounded-lg border border-navy/10 bg-white p-4">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="text-xl font-black">{entry.title}</h2>
+                <h2 className="text-xl font-black">{entryTitle(entry, language)}</h2>
                 <p className="text-sm font-semibold text-navy/55">{entry.creator}</p>
               </div>
               <div className="flex items-center gap-3 rounded-md bg-neutralPanel p-3">
@@ -153,7 +154,7 @@ export function WinnerReviewPage() {
                 <span className="text-2xl font-black text-orange">{entry.score}</span>
               </div>
             </div>
-            <p className="mt-4 leading-7 text-navy/70">{entry.summary || entry.review}</p>
+            <p className="mt-4 leading-7 text-navy/70">{entrySummary(entry, language)}</p>
           </article>
 
           <fieldset className="mt-6 grid gap-3" aria-describedby={error ? 'winner-review-error' : undefined}>

@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import type { Category, Contest } from '../types';
 
-type Language = 'en' | 'ja';
+export type Language = 'en' | 'ja';
 
 const messages = {
   en: {

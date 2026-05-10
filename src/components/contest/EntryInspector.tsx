@@ -4,6 +4,7 @@ import type { Entry } from '../../types';
 import { contests } from '../../data/contests';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { creatorSlug } from '../../utils/creatorSlug';
+import { entryReview, entryTags, entryTitle } from '../../utils/entryDisplay';
 import { Button } from '../common/Button';
 import { Pill } from '../common/Pill';
 import { RatingStars } from '../common/RatingStars';
@@ -18,8 +19,8 @@ const inspectorCopy = {
     winnerLocked: 'Winner already selected',
   },
   ja: {
-    winner: '受賞',
-    finalist: '最終候補',
+    winner: '受賞作品',
+    finalist: 'ファイナリスト',
     entry: '応募',
     comments: 'コメント',
     views: '閲覧',
@@ -32,6 +33,7 @@ export function EntryInspector({ entry, onNotice }: { entry: Entry; onNotice: ()
   const text = inspectorCopy[language];
   const contest = contests.find((item) => item.id === entry.contestId);
   const canReviewWinner = contest?.status !== 'Completed';
+  const title = entryTitle(entry, language);
 
   return (
     <aside className="mock-surface sticky top-24 rounded-lg p-5">
@@ -40,7 +42,7 @@ export function EntryInspector({ entry, onNotice }: { entry: Entry; onNotice: ()
         {entry.finalist && <Pill tone="amber">{text.finalist}</Pill>}
         <Pill>{text.entry}</Pill>
       </div>
-      <h3 className="mt-3 text-xl font-black">{entry.title}</h3>
+      <h3 className="mt-3 text-xl font-black">{title}</h3>
       <Link className="text-sm font-semibold text-navy/55 hover:text-orange" to={`/creators/${creatorSlug(entry.creator)}`}>
         {entry.creator}
       </Link>
@@ -48,9 +50,9 @@ export function EntryInspector({ entry, onNotice }: { entry: Entry; onNotice: ()
         <RatingStars rating={entry.rating} />
         <span className="text-2xl font-black text-orange">{entry.score}</span>
       </div>
-      <p className="mt-4 text-sm leading-6 text-navy/70">{entry.review}</p>
+      <p className="mt-4 text-sm leading-6 text-navy/70">{entryReview(entry, language)}</p>
       <div className="mt-4 flex flex-wrap gap-2">
-        {entry.tags.map((tag) => (
+        {entryTags(entry, language).map((tag) => (
           <Pill key={tag}>{tag}</Pill>
         ))}
       </div>

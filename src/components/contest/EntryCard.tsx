@@ -6,6 +6,7 @@ import { Pill } from '../common/Pill';
 import { cn } from '../../utils/cn';
 import { creatorSlug } from '../../utils/creatorSlug';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { entryTitle } from '../../utils/entryDisplay';
 
 const entryCardCopy = {
   en: {
@@ -16,8 +17,8 @@ const entryCardCopy = {
     details: 'Details',
   },
   ja: {
-    winner: '受賞',
-    finalist: '最終候補',
+    winner: '受賞作品',
+    finalist: 'ファイナリスト',
     selected: '選択中',
     select: '選択',
     details: '詳細',
@@ -35,6 +36,7 @@ export function EntryCard({
 }) {
   const { language } = useLanguage();
   const text = entryCardCopy[language];
+  const title = entryTitle(entry, language);
 
   return (
     <article
@@ -43,7 +45,7 @@ export function EntryCard({
         selected ? 'border-orange shadow-soft' : 'border-navy/10',
       )}
     >
-      <button className="focus-ring w-full rounded-md text-left" onClick={onSelect} aria-label={`${text.select} ${entry.title}`} aria-pressed={selected}>
+      <button className="focus-ring w-full rounded-md text-left" onClick={onSelect} aria-label={`${text.select} ${title}`} aria-pressed={selected}>
         <div className={`h-36 rounded-md bg-gradient-to-br ${entry.gradient} p-3`}>
           <div className="grid h-full grid-cols-[1fr_48px] gap-2 rounded-md border border-white/80 bg-white/45 p-2">
             <div>
@@ -61,7 +63,7 @@ export function EntryCard({
         {entry.winner && <Pill tone="emerald">{text.winner}</Pill>}
         {entry.finalist && <Pill tone="amber">{text.finalist}</Pill>}
       </div>
-      <h4 className="mt-2 font-black">{entry.title}</h4>
+      <h4 className="mt-2 font-black">{title}</h4>
       <Link className="text-sm text-navy/60 hover:text-orange" to={`/creators/${creatorSlug(entry.creator)}`}>
         {entry.creator}
       </Link>

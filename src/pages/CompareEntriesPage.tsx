@@ -8,6 +8,7 @@ import { RatingStars } from '../components/common/RatingStars';
 import { contests } from '../data/contests';
 import { entries } from '../data/entries';
 import { useLanguage } from '../i18n/LanguageContext';
+import { entryCriteria, entrySummary, entryTags, entryTitle } from '../utils/entryDisplay';
 
 const compareCopy = {
   en: {
@@ -166,13 +167,13 @@ export function CompareEntriesPage() {
             {contestEntries.map((entry) => (
               <article key={entry.id} className="mock-surface rounded-lg p-4">
                 <div className={`h-44 rounded-md bg-gradient-to-br ${entry.gradient} p-3`}>
-                  <img className="h-full w-full rounded-md object-cover opacity-85 mix-blend-multiply" src={contest.thumbnail} alt={`${entry.title} preview`} />
+                  <img className="h-full w-full rounded-md object-cover opacity-85 mix-blend-multiply" src={contest.thumbnail} alt={`${entryTitle(entry, language)} preview`} />
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {entry.winner && <Pill tone="emerald">{text.winner}</Pill>}
                   {entry.finalist && <Pill tone="amber">{text.finalist}</Pill>}
                 </div>
-                <h2 className="mt-3 text-xl font-black">{entry.title}</h2>
+                <h2 className="mt-3 text-xl font-black">{entryTitle(entry, language)}</h2>
                 <p className="text-sm font-semibold text-navy/55">{entry.creator}</p>
                 <div className="mt-4 grid grid-cols-2 gap-3">
                   <div className="rounded-md bg-neutralPanel p-3">
@@ -194,9 +195,9 @@ export function CompareEntriesPage() {
                     <p className="text-2xl font-black">{entry.views}</p>
                   </div>
                 </div>
-                <p className="mt-4 text-sm leading-6 text-navy/70">{entry.summary}</p>
+                <p className="mt-4 text-sm leading-6 text-navy/70">{entrySummary(entry, language)}</p>
                 <div className="mt-4 grid gap-2">
-                  {entry.reviewCriteria.map((item) => (
+                  {entryCriteria(entry, language).map((item) => (
                     <div key={item} className="flex gap-2 rounded-md bg-neutralPanel p-2 text-xs font-semibold text-navy/70">
                       <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-contestGreen" /> {item}
                     </div>
@@ -248,11 +249,11 @@ export function CompareEntriesPage() {
                 <tbody className="divide-y divide-navy/10">
                   {contestEntries.map((entry) => (
                     <tr key={entry.id}>
-                      <td className="py-3 pr-3 font-black">{entry.title}</td>
+                      <td className="py-3 pr-3 font-black">{entryTitle(entry, language)}</td>
                       <td className="py-3 pr-3 font-semibold text-navy/65">{entry.creator}</td>
                       <td className="py-3 pr-3 font-black text-orange">{entry.score}</td>
                       <td className="py-3 pr-3 font-semibold">{entry.winner ? text.winner : entry.finalist ? text.finalist : shortlist.includes(entry.id) ? text.shortlisted : text.hold}</td>
-                      <td className="py-3 pr-3 text-navy/65">{entry.tags.slice(0, 2).join(' / ')}</td>
+                      <td className="py-3 pr-3 text-navy/65">{entryTags(entry, language).slice(0, 2).join(' / ')}</td>
                     </tr>
                   ))}
                 </tbody>

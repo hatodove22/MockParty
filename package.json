@@ -10,7 +10,9 @@
     "preview": "vite preview --configLoader runner",
     "test": "vitest run --configLoader runner",
     "lint": "tsc -b --noEmit",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "qa:screenshots": "node scripts/qa-screenshots.mjs",
+    "generate:receipts": "node scripts/generate-pdf-receipts.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.1.1",

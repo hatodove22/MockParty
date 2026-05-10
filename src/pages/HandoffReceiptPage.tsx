@@ -5,6 +5,7 @@ import { Pill } from '../components/common/Pill';
 import { contests } from '../data/contests';
 import { entries } from '../data/entries';
 import { useLanguage } from '../i18n/LanguageContext';
+import { entryTitle } from '../utils/entryDisplay';
 
 const handoffCopy = {
   en: {
@@ -23,6 +24,7 @@ const handoffCopy = {
     files: ['Prototype preview link', 'Static scorecard', 'AI-use disclosure', 'Rights and scope checklist'],
     notFound: 'Handoff receipt not found',
     backToContests: 'Back to contests',
+    pdf: 'Download generated PDF sample',
   },
   ja: {
     back: 'コンテストへ戻る',
@@ -40,6 +42,7 @@ const handoffCopy = {
     files: ['プロトタイププレビューリンク', '静的スコアカード', 'AI利用開示', '権利と範囲のチェックリスト'],
     notFound: 'ハンドオフ受領書が見つかりません',
     backToContests: 'コンテスト一覧へ戻る',
+    pdf: '生成済みPDFサンプルを開く',
   },
 } as const;
 
@@ -50,7 +53,7 @@ export function HandoffReceiptPage() {
   const contest = contests.find((item) => item.id === Number(contestId));
   const entry = entries.find((item) => item.id === Number(entryId) && item.contestId === Number(contestId));
   const receiptItems = [
-    [text.labels[0], entry?.title ?? 'Unknown entry'],
+    [text.labels[0], entry ? entryTitle(entry, language) : 'Unknown entry'],
     [text.labels[1], entry?.creator ?? 'Unknown creator'],
     [text.labels[2], contest?.guaranteed ? text.guaranteed : text.manual],
     [text.labels[3], text.rights],
@@ -123,6 +126,9 @@ export function HandoffReceiptPage() {
           <Link className="mt-5 inline-flex w-full" to={`/contests/${contest.id}/archive`}>
             <Button className="w-full">{text.archive}</Button>
           </Link>
+          <a className="mt-2 inline-flex w-full" href="/generated/mockcontest-handoff-receipt.pdf">
+            <Button className="w-full" variant="ghost">{text.pdf}</Button>
+          </a>
         </aside>
       </section>
     </main>
