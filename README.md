@@ -27,6 +27,8 @@ GitHub Pages is deployed by GitHub Actions. In repository settings, set Pages so
 
 The Vite base path is set to `/MockParty/`. If the repository name changes, update `vite.config.js` and `package.json`.
 
+The app includes `noindex` metadata and a `robots.txt` disallow rule to discourage search indexing while the prototype is being reviewed. This is not access control.
+
 ### GitHub Pages quick start
 
 ```bash
