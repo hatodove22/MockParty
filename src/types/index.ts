@@ -24,6 +24,11 @@ export interface Contest {
   client: string;
   color: string;
   thumbnail: string;
+  packageName: ContestPackage['name'];
+  phase: string;
+  watchers: number;
+  timeline: string[];
+  requirements: string[];
   brief: string;
   deliverables: string[];
 }

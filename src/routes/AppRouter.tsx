@@ -1,12 +1,16 @@
 import { Route, Routes } from 'react-router-dom';
 import { BrowsePage } from '../pages/BrowsePage';
+import { CompareEntriesPage } from '../pages/CompareEntriesPage';
 import { ContestCreatedPage } from '../pages/ContestCreatedPage';
+import { ContestArchivePage } from '../pages/ContestArchivePage';
 import { ContestDetailPage } from '../pages/ContestDetailPage';
 import { CreatorPage } from '../pages/CreatorPage';
+import { CreatorProfilePage } from '../pages/CreatorProfilePage';
 import { EntryDetailPage } from '../pages/EntryDetailPage';
 import { HomePage } from '../pages/HomePage';
 import { NewContestPage } from '../pages/NewContestPage';
 import { NotFoundPage } from '../pages/NotFoundPage';
+import { PricingPage } from '../pages/PricingPage';
 import { SafetyPage } from '../pages/SafetyPage';
 import { SubmitEntryPage } from '../pages/SubmitEntryPage';
 import { SubmitSuccessPage } from '../pages/SubmitSuccessPage';
@@ -21,12 +25,16 @@ export function AppRouter() {
       <Route path="/contests/new" element={<NewContestPage />} />
       <Route path="/contests/new/success" element={<ContestCreatedPage />} />
       <Route path="/contests/:contestId" element={<ContestDetailPage />} />
+      <Route path="/contests/:contestId/archive" element={<ContestArchivePage />} />
+      <Route path="/contests/:contestId/compare" element={<CompareEntriesPage />} />
       <Route path="/contests/:contestId/entries/:entryId" element={<EntryDetailPage />} />
       <Route path="/contests/:contestId/submit" element={<SubmitEntryPage />} />
       <Route path="/contests/:contestId/submit/success" element={<SubmitSuccessPage />} />
       <Route path="/contests/:contestId/winner-review/:entryId" element={<WinnerReviewPage />} />
       <Route path="/contests/:contestId/winner-review/:entryId/success" element={<WinnerSuccessPage />} />
       <Route path="/creators" element={<CreatorPage />} />
+      <Route path="/creators/:creatorSlug" element={<CreatorProfilePage />} />
+      <Route path="/pricing" element={<PricingPage />} />
       <Route path="/safety" element={<SafetyPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

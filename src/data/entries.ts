@@ -66,7 +66,7 @@ export const entries: Entry[] = [
     rating: 5,
     score: 91,
     finalist: true,
-    winner: false,
+    winner: true,
     comments: 9,
     views: 118,
     tags: ['Consent', 'Audit trail', 'Study ops'],

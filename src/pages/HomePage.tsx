@@ -3,6 +3,7 @@ import { ArrowRight, ShieldCheck, Trophy, Users } from 'lucide-react';
 import { contests } from '../data/contests';
 import { Button } from '../components/common/Button';
 import { ContestCard } from '../components/contest/ContestCard';
+import { MarketplaceSections } from '../components/marketing/MarketplaceSections';
 import { Metric } from '../components/contest/Metric';
 import { Pill } from '../components/common/Pill';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -52,6 +53,7 @@ export function HomePage() {
           </div>
         </div>
       </section>
+      <MarketplaceSections />
     </main>
   );
 }

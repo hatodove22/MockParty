@@ -2,6 +2,7 @@ import { MessageSquare, MousePointerClick } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { Entry } from '../../types';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { creatorSlug } from '../../utils/creatorSlug';
 import { Button } from '../common/Button';
 import { Pill } from '../common/Pill';
 import { RatingStars } from '../common/RatingStars';
@@ -17,7 +18,9 @@ export function EntryInspector({ entry, onNotice }: { entry: Entry; onNotice: ()
         <Pill>Entry</Pill>
       </div>
       <h3 className="mt-3 text-xl font-black">{entry.title}</h3>
-      <p className="text-sm font-semibold text-navy/55">{entry.creator}</p>
+      <Link className="text-sm font-semibold text-navy/55 hover:text-orange" to={`/creators/${creatorSlug(entry.creator)}`}>
+        {entry.creator}
+      </Link>
       <div className="mt-4 flex items-center justify-between rounded-md bg-neutralPanel p-3">
         <RatingStars rating={entry.rating} />
         <span className="text-2xl font-black text-orange">{entry.score}</span>

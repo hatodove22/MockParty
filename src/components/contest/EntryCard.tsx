@@ -4,6 +4,7 @@ import type { Entry } from '../../types';
 import { RatingStars } from '../common/RatingStars';
 import { Pill } from '../common/Pill';
 import { cn } from '../../utils/cn';
+import { creatorSlug } from '../../utils/creatorSlug';
 
 export function EntryCard({
   entry,
@@ -40,7 +41,9 @@ export function EntryCard({
         {entry.finalist && <Pill tone="amber">Finalist</Pill>}
       </div>
       <h4 className="mt-2 font-black">{entry.title}</h4>
-      <p className="text-sm text-navy/60">{entry.creator}</p>
+      <Link className="text-sm text-navy/60 hover:text-orange" to={`/creators/${creatorSlug(entry.creator)}`}>
+        {entry.creator}
+      </Link>
       <div className="mt-3 flex items-center justify-between gap-3">
         <RatingStars rating={entry.rating} />
         <span className="font-black text-orange">{entry.score}</span>

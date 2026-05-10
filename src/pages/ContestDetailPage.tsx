@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, AlertTriangle, Send } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, CheckCircle2, Columns3, Eye, Send } from 'lucide-react';
 import { contests } from '../data/contests';
 import { entries } from '../data/entries';
 import { safetyNotice } from '../data/responsibility';
@@ -50,6 +50,7 @@ export function ContestDetailPage() {
           <Pill>{contest.status}</Pill>
           {contest.guaranteed && <Pill tone="green">{t('guaranteed')}</Pill>}
           {contest.private && <Pill tone="amber">{t('private')}</Pill>}
+          <Pill tone="orange">{contest.packageName}</Pill>
         </div>
         <div className="mt-4 grid gap-6 lg:grid-cols-[1fr_auto]">
           <div>
@@ -72,6 +73,14 @@ export function ContestDetailPage() {
           </div>
         </div>
         <div className="mt-5 flex flex-wrap gap-3">
+          {contest.status === 'Completed' && (
+            <Link
+              className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-contestGreen px-4 py-2 text-sm font-semibold text-white hover:bg-contestGreen/90"
+              to={`/contests/${contest.id}/archive`}
+            >
+              <CheckCircle2 size={16} /> View archive
+            </Link>
+          )}
           {reviewEntry ? (
             <Link
               className="focus-ring inline-flex min-h-10 items-center justify-center rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white hover:bg-orange/90"
@@ -88,10 +97,50 @@ export function ContestDetailPage() {
           >
             <Send size={16} /> {t('submitProposal')}
           </Link>
+          <Link
+            className="focus-ring inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-navy/15 bg-white px-4 py-2 text-sm font-semibold text-navy hover:border-contestGreen/60"
+            to={`/contests/${contest.id}/compare`}
+          >
+            <Columns3 size={16} /> Compare entries
+          </Link>
           <Button variant="ghost" onClick={() => setNoticeOpen(true)}>
             {t('developmentNotice')}
           </Button>
         </div>
+      </section>
+
+      <section className="mt-6 grid gap-4 lg:grid-cols-[1fr_360px]">
+        <div className="mock-surface rounded-lg p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-black uppercase tracking-wide text-contestGreen">Contest operations</p>
+              <h2 className="mt-1 text-2xl font-black">{contest.phase}</h2>
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-md bg-mint px-3 py-2 text-sm font-black text-contestGreen">
+              <Eye size={16} /> {contest.watchers} watchers
+            </div>
+          </div>
+          <div className="mt-5 grid gap-3 md:grid-cols-2">
+            {contest.timeline.map((item, index) => (
+              <div key={item} className="flex gap-3 rounded-md bg-neutralPanel p-3 text-sm font-semibold text-navy/70">
+                <span className={`grid size-7 shrink-0 place-items-center rounded-full text-xs font-black ${index < 2 ? 'bg-contestGreen text-white' : 'bg-white text-navy'}`}>
+                  {index + 1}
+                </span>
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+        <aside className="mock-surface rounded-lg p-5">
+          <p className="text-sm font-black uppercase tracking-wide text-contestGreen">Submission requirements</p>
+          <div className="mt-4 grid gap-2">
+            {contest.requirements.map((item) => (
+              <div key={item} className="flex gap-2 rounded-md bg-neutralPanel p-3 text-sm font-semibold text-navy/70">
+                <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-contestGreen" /> {item}
+              </div>
+            ))}
+          </div>
+        </aside>
       </section>
 
       <div className="mt-6 flex gap-2 overflow-x-auto">

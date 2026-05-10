@@ -25,8 +25,10 @@ describe('MockContest static data', () => {
     expect(entries.every((entry) => entry.rating >= 1 && entry.rating <= 5)).toBe(true);
   });
 
-  it('has one winner and valid contest categories', () => {
-    expect(entries.filter((entry) => entry.winner)).toHaveLength(1);
+  it('has valid contest categories and at most one winner per contest', () => {
+    const winnerContestIds = entries.filter((entry) => entry.winner).map((entry) => entry.contestId);
+    expect(winnerContestIds.length).toBeGreaterThan(0);
+    expect(hasDuplicates(winnerContestIds)).toBe(false);
     expect(contests.every((contest) => categories.includes(contest.category))).toBe(true);
   });
 
@@ -36,6 +38,15 @@ describe('MockContest static data', () => {
     expect(entries.every((entry) => entry.summary.length > 20)).toBe(true);
     expect(entries.every((entry) => entry.reviewCriteria.length >= 3)).toBe(true);
     expect(entries.every((entry) => entry.discussion.length >= 2)).toBe(true);
+  });
+
+  it('has marketplace metadata for each contest', () => {
+    expect(contests.every((contest) => contest.thumbnail.startsWith('/assets/contest-thumbnails/'))).toBe(true);
+    expect(contests.every((contest) => contest.packageName.length > 0)).toBe(true);
+    expect(contests.every((contest) => contest.phase.length > 0)).toBe(true);
+    expect(contests.every((contest) => contest.watchers >= contest.creators)).toBe(true);
+    expect(contests.every((contest) => contest.timeline.length >= 3)).toBe(true);
+    expect(contests.every((contest) => contest.requirements.length >= 3)).toBe(true);
   });
 
   it('blocks production development purpose and defines responsibility boundaries', () => {

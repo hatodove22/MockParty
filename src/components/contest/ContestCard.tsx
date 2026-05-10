@@ -6,7 +6,6 @@ import { Pill } from '../common/Pill';
 
 export function ContestCard({ contest }: { contest: Contest }) {
   const { categoryLabel, contestBrief, contestTitle, t } = useLanguage();
-  const packageName = contest.prize === '$2,400' ? 'Premium' : contest.prize === '$900' ? 'Starter' : contest.prize === '$1,800' ? 'Premium' : 'Standard';
 
   return (
     <article className="grid gap-4 border-b border-navy/10 bg-white p-4 transition hover:bg-mint/45 md:grid-cols-[132px_1fr_170px]">
@@ -36,12 +35,13 @@ export function ContestCard({ contest }: { contest: Contest }) {
             <Clock size={16} /> {contest.daysLeft} {t('daysLeft')}
           </span>
           <span>{contest.entries} {t('designs')}</span>
+          <span>{contest.watchers} watching</span>
         </div>
       </div>
       <div className="flex min-w-32 flex-col justify-between gap-3 rounded-md bg-neutralPanel p-3 md:items-end">
         <div className="md:text-right">
           <span className="block text-xl font-black">{contest.prize}</span>
-          <span className="mt-1 block text-xs font-bold text-navy/55">{packageName} {t('packagePurchased')}</span>
+          <span className="mt-1 block text-xs font-bold text-navy/55">{contest.packageName} {t('packagePurchased')}</span>
           <span className="block text-xs text-navy/45">({t('includingFees')})</span>
         </div>
         <Link className="focus-ring inline-flex items-center justify-center gap-2 rounded-md bg-navy px-3 py-2 text-sm font-bold text-white" to={`/contests/${contest.id}`}>

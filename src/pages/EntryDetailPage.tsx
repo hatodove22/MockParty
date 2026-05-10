@@ -5,6 +5,7 @@ import { Pill } from '../components/common/Pill';
 import { RatingStars } from '../components/common/RatingStars';
 import { contests } from '../data/contests';
 import { entries } from '../data/entries';
+import { creatorSlug } from '../utils/creatorSlug';
 
 function NotFoundPanel() {
   return (
@@ -50,7 +51,9 @@ export function EntryDetailPage() {
             {entry.finalist && <Pill tone="amber">Finalist</Pill>}
           </div>
           <h1 className="mt-4 text-3xl font-black md:text-5xl">{entry.title}</h1>
-          <p className="mt-2 font-semibold text-navy/55">by {entry.creator}</p>
+          <Link className="mt-2 inline-flex font-semibold text-navy/55 hover:text-orange" to={`/creators/${creatorSlug(entry.creator)}`}>
+            by {entry.creator}
+          </Link>
 
           <div className={`mt-6 h-72 rounded-lg bg-gradient-to-br ${entry.gradient} p-4`}>
             <div className="grid h-full gap-4 rounded-md border border-white/80 bg-white/50 p-4 md:grid-cols-[1fr_180px]">

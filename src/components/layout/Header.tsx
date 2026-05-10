@@ -4,10 +4,11 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { Button } from '../common/Button';
 
 export function Header() {
-  const { t, toggleLanguage } = useLanguage();
+  const { language, t, toggleLanguage } = useLanguage();
   const navItems = [
     [t('browseContests'), '/contests'],
     [t('creators'), '/creators'],
+    [language === 'ja' ? '料金' : 'Pricing', '/pricing'],
     [t('activeExample'), '/contests/1'],
     [t('safety'), '/safety'],
     [t('openContest'), '/contests/new'],

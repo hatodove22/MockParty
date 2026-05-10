@@ -32,3 +32,20 @@ select {
 .mock-surface {
   @apply border border-navy/10 bg-white shadow-soft;
 }
+
+@media print {
+  header,
+  footer,
+  button,
+  a[href]::after {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+  }
+
+  .mock-surface {
+    box-shadow: none !important;
+  }
+}

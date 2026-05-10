@@ -13,23 +13,35 @@ export function BrowsePage() {
   const [category, setCategory] = useState<Category | 'All'>('All');
   const [query, setQuery] = useState('');
   const [guaranteed, setGuaranteed] = useState(false);
+  const [status, setStatus] = useState<'All' | 'Open' | 'Finalist' | 'Completed'>('All');
+  const [sort, setSort] = useState<'recommended' | 'prize' | 'entries' | 'deadline'>('recommended');
 
   const filtered = useMemo(
-    () =>
-      contests.filter((contest) => {
+    () => {
+      const filteredContests = contests.filter((contest) => {
         const categoryMatch = category === 'All' || contest.category === category;
         const queryMatch = `${contest.title} ${contest.brief} ${contest.client}`.toLowerCase().includes(query.toLowerCase());
         const guaranteeMatch = !guaranteed || contest.guaranteed;
-        return categoryMatch && queryMatch && guaranteeMatch;
-      }),
-    [category, guaranteed, query],
+        const statusMatch = status === 'All' || contest.status === status;
+        return categoryMatch && queryMatch && guaranteeMatch && statusMatch;
+      });
+
+      return [...filteredContests].sort((first, second) => {
+        if (sort === 'prize') return Number(second.prize.replace(/[$,]/g, '')) - Number(first.prize.replace(/[$,]/g, ''));
+        if (sort === 'entries') return second.entries - first.entries;
+        if (sort === 'deadline') return first.daysLeft - second.daysLeft;
+        return Number(second.featured) - Number(first.featured) || Number(second.guaranteed) - Number(first.guaranteed);
+      });
+    },
+    [category, guaranteed, query, sort, status],
   );
-  const hasFilters = category !== 'All' || query.length > 0 || guaranteed;
+  const hasFilters = category !== 'All' || query.length > 0 || guaranteed || status !== 'All';
 
   const resetFilters = () => {
     setCategory('All');
     setQuery('');
     setGuaranteed(false);
+    setStatus('All');
   };
 
   return (
@@ -51,10 +63,32 @@ export function BrowsePage() {
       </div>
       <div className="mb-5 grid gap-3">
         <CategoryRail selected={category} onSelect={setCategory} />
-        <label className="inline-flex items-center gap-2 text-sm font-bold">
-          <input type="checkbox" checked={guaranteed} onChange={(event) => setGuaranteed(event.target.checked)} />
-          {t('guaranteedOnly')}
-        </label>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="inline-flex items-center gap-2 text-sm font-bold">
+              <input type="checkbox" checked={guaranteed} onChange={(event) => setGuaranteed(event.target.checked)} />
+              {t('guaranteedOnly')}
+            </label>
+            <label className="flex items-center gap-2 text-sm font-bold">
+              Status
+              <select className="focus-ring rounded-md border border-navy/15 bg-white px-3 py-2" value={status} onChange={(event) => setStatus(event.target.value as typeof status)}>
+                <option>All</option>
+                <option>Open</option>
+                <option>Finalist</option>
+                <option>Completed</option>
+              </select>
+            </label>
+          </div>
+          <label className="flex items-center gap-2 text-sm font-bold">
+            Sort
+            <select className="focus-ring rounded-md border border-navy/15 bg-white px-3 py-2" value={sort} onChange={(event) => setSort(event.target.value as typeof sort)}>
+              <option value="recommended">Recommended</option>
+              <option value="prize">Highest prize</option>
+              <option value="entries">Most designs</option>
+              <option value="deadline">Ending soon</option>
+            </select>
+          </label>
+        </div>
       </div>
       {filtered.length > 0 ? (
         <div className="overflow-hidden rounded-lg border border-navy/10 bg-white shadow-soft">
