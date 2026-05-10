@@ -25,6 +25,9 @@ const submitCopy = {
     closedCopy:
       'New entries are locked in this prototype so the lifecycle matches a real design-contest marketplace. You can still inspect entries, compare finalists, or view the archive when available.',
     compare: 'Compare entries',
+    notFound: 'Contest not found',
+    notFoundCopy: 'This static prototype could not find a contest for that ID.',
+    backToContests: 'Back to contests',
     errors: {
       title: 'Title is required.',
       demoUrl: 'Demo URL is required.',
@@ -56,6 +59,9 @@ const submitCopy = {
     closedCopy:
       '実際のデザインコンテストと同じライフサイクルに見えるよう、新規応募はロックされています。応募作品の確認、比較、アーカイブ閲覧は引き続き可能です。',
     compare: '応募作品を比較',
+    notFound: 'コンテストが見つかりません',
+    notFoundCopy: 'この静的プロトタイプでは、そのIDのコンテストを見つけられませんでした。',
+    backToContests: 'コンテスト一覧へ戻る',
     errors: {
       title: 'タイトルを入力してください。',
       demoUrl: 'デモURLを入力してください。',
@@ -82,14 +88,16 @@ function isValidUrl(value: string) {
 }
 
 function NotFoundPanel() {
+  const { language } = useLanguage();
+  const text = submitCopy[language];
   return (
     <main className="mx-auto max-w-4xl px-4 py-14 lg:px-6">
       <section className="mock-surface rounded-lg p-6">
         <Pill tone="rose">Not found</Pill>
-        <h1 className="mt-4 text-3xl font-black">Contest not found</h1>
-        <p className="mt-3 text-navy/70">This static prototype could not find a contest for that ID.</p>
+        <h1 className="mt-4 text-3xl font-black">{text.notFound}</h1>
+        <p className="mt-3 text-navy/70">{text.notFoundCopy}</p>
         <Link className="mt-5 inline-flex rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy/90" to="/contests">
-          Back to contests
+          {text.backToContests}
         </Link>
       </section>
     </main>

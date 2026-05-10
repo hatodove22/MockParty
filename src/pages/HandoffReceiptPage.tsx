@@ -21,6 +21,8 @@ const handoffCopy = {
     rights: 'Prototype-use rights checklist acknowledged',
     bundle: 'Entry scorecard, comments, and responsibility summary',
     files: ['Prototype preview link', 'Static scorecard', 'AI-use disclosure', 'Rights and scope checklist'],
+    notFound: 'Handoff receipt not found',
+    backToContests: 'Back to contests',
   },
   ja: {
     back: 'コンテストへ戻る',
@@ -36,6 +38,8 @@ const handoffCopy = {
     rights: 'プロトタイプ利用権のチェックリスト確認済み',
     bundle: '応募スコアカード、コメント、責任範囲サマリー',
     files: ['プロトタイププレビューリンク', '静的スコアカード', 'AI利用開示', '権利と範囲のチェックリスト'],
+    notFound: 'ハンドオフ受領書が見つかりません',
+    backToContests: 'コンテスト一覧へ戻る',
   },
 } as const;
 
@@ -59,9 +63,9 @@ export function HandoffReceiptPage() {
       <main className="mx-auto max-w-4xl px-4 py-14 lg:px-6">
         <section className="mock-surface rounded-lg p-6">
           <Pill tone="rose">Not found</Pill>
-          <h1 className="mt-4 text-3xl font-black">Handoff receipt not found</h1>
+          <h1 className="mt-4 text-3xl font-black">{text.notFound}</h1>
           <Link className="mt-5 inline-flex rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy/90" to="/contests">
-            Back to contests
+            {text.backToContests}
           </Link>
         </section>
       </main>

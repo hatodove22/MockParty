@@ -31,6 +31,9 @@ const reviewCopy = {
     completedCopy: 'This completed contest is locked. Use the archive or handoff receipt to review the selected direction.',
     archive: 'Open archive',
     handoff: 'Open handoff receipt',
+    notFound: 'Winner review not found',
+    notFoundCopy: 'The contest and entry IDs must both match an available static entry.',
+    backToContests: 'Back to contests',
   },
   ja: {
     back: 'コンテストへ戻る',
@@ -52,18 +55,23 @@ const reviewCopy = {
     completedCopy: '完了済みコンテストはロックされています。選定結果はアーカイブまたはハンドオフ受領ページで確認してください。',
     archive: 'アーカイブを開く',
     handoff: 'ハンドオフ受領を開く',
+    notFound: '受賞確認が見つかりません',
+    notFoundCopy: 'コンテストIDと応募IDの両方が、利用可能な静的応募と一致する必要があります。',
+    backToContests: 'コンテスト一覧へ戻る',
   },
 } as const;
 
 function NotFoundPanel() {
+  const { language } = useLanguage();
+  const text = reviewCopy[language];
   return (
     <main className="mx-auto max-w-4xl px-4 py-14 lg:px-6">
       <section className="mock-surface rounded-lg p-6">
         <Pill tone="rose">Not found</Pill>
-        <h1 className="mt-4 text-3xl font-black">Winner review not found</h1>
-        <p className="mt-3 text-navy/70">The contest and entry IDs must both match an available static entry.</p>
+        <h1 className="mt-4 text-3xl font-black">{text.notFound}</h1>
+        <p className="mt-3 text-navy/70">{text.notFoundCopy}</p>
         <Link className="mt-5 inline-flex rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white hover:bg-navy/90" to="/contests">
-          Back to contests
+          {text.backToContests}
         </Link>
       </section>
     </main>
@@ -148,7 +156,7 @@ export function WinnerReviewPage() {
             <p className="mt-4 leading-7 text-navy/70">{entry.summary || entry.review}</p>
           </article>
 
-          <fieldset className="mt-6 grid gap-3">
+          <fieldset className="mt-6 grid gap-3" aria-describedby={error ? 'winner-review-error' : undefined}>
             <legend className="text-sm font-black">{text.acknowledgementsTitle}</legend>
             {text.checks.map((item) => (
               <label key={item} className="flex items-start gap-3 rounded-md bg-neutralPanel p-3 text-sm font-semibold text-navy/70">
@@ -156,7 +164,7 @@ export function WinnerReviewPage() {
                 <span>{item}</span>
               </label>
             ))}
-            {error && <span className="text-xs font-bold text-rose-700" role="alert">{error}</span>}
+            {error && <span id="winner-review-error" className="text-xs font-bold text-rose-700" role="alert">{error}</span>}
           </fieldset>
 
           <div className="mt-6 flex flex-wrap justify-end gap-2 border-t border-navy/10 pt-5">

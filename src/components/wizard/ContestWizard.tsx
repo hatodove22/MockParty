@@ -202,7 +202,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
 
       <div className="mb-4 min-h-6">
         {(error || stepStatus) && (
-          <p className={`text-sm font-bold ${error ? 'text-rose-700' : 'text-navy/55'}`} role={error ? 'alert' : undefined}>
+          <p id="contest-wizard-status" className={`text-sm font-bold ${error ? 'text-rose-700' : 'text-navy/55'}`} role={error ? 'alert' : undefined}>
             {error || stepStatus}
           </p>
         )}
@@ -260,8 +260,10 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
             {text.titleLabel}
             <input
               className="focus-ring rounded-md border border-navy/15 px-3 py-2"
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            aria-invalid={step === 2 && !title.trim()}
+            aria-describedby="contest-wizard-status"
             />
           </label>
           <label className="grid gap-2 text-sm font-bold">
@@ -270,6 +272,8 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
               className="focus-ring min-h-24 rounded-md border border-navy/15 px-3 py-2"
               value={goal}
               onChange={(event) => setGoal(event.target.value)}
+              aria-invalid={step === 2 && !goal.trim()}
+              aria-describedby="contest-wizard-status"
             />
           </label>
           <div>
@@ -312,7 +316,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
       )}
 
       {step === 3 && (
-        <div className="space-y-3">
+        <div className="space-y-3" aria-describedby="contest-wizard-status">
           {safetyItems.map((item, index) => (
             <label key={item} className="flex items-start gap-3 rounded-lg border border-navy/10 bg-white p-3 text-sm font-semibold">
               <input
