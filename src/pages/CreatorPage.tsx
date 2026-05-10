@@ -231,25 +231,25 @@ export function CreatorPage() {
           <form className="grid gap-4" onSubmit={handleSubmit} noValidate>
             <label className="grid gap-2 text-sm font-bold">
               {formText.labels.title}
-              <input className="focus-ring rounded-md border border-navy/15 px-3 py-2" placeholder={formText.placeholders.title} value={title} onChange={(event) => setTitle(event.target.value)} aria-invalid={Boolean(errors.title)} />
-              {errors.title && <span className="text-xs text-rose-700" role="alert">{errors.title}</span>}
+              <input className="focus-ring rounded-md border border-navy/15 px-3 py-2" placeholder={formText.placeholders.title} value={title} onChange={(event) => setTitle(event.target.value)} aria-invalid={Boolean(errors.title)} aria-describedby={errors.title ? 'creator-title-error' : undefined} />
+              {errors.title && <span id="creator-title-error" className="text-xs text-rose-700" role="alert">{errors.title}</span>}
             </label>
             <label className="grid gap-2 text-sm font-bold">
               {formText.labels.demoUrl}
-              <input className="focus-ring rounded-md border border-navy/15 px-3 py-2" placeholder={formText.placeholders.demoUrl} value={demoUrl} onChange={(event) => setDemoUrl(event.target.value)} aria-invalid={Boolean(errors.demoUrl)} />
-              {errors.demoUrl && <span className="text-xs text-rose-700" role="alert">{errors.demoUrl}</span>}
+              <input className="focus-ring rounded-md border border-navy/15 px-3 py-2" placeholder={formText.placeholders.demoUrl} value={demoUrl} onChange={(event) => setDemoUrl(event.target.value)} aria-invalid={Boolean(errors.demoUrl)} aria-describedby={errors.demoUrl ? 'creator-url-error' : undefined} />
+              {errors.demoUrl && <span id="creator-url-error" className="text-xs text-rose-700" role="alert">{errors.demoUrl}</span>}
             </label>
             <label className="grid gap-2 text-sm font-bold">
               {formText.labels.aiTools}
-              <input className="focus-ring rounded-md border border-navy/15 px-3 py-2" placeholder={formText.placeholders.aiTools} value={aiTools} onChange={(event) => setAiTools(event.target.value)} aria-invalid={Boolean(errors.aiTools)} />
-              {errors.aiTools && <span className="text-xs text-rose-700" role="alert">{errors.aiTools}</span>}
+              <input className="focus-ring rounded-md border border-navy/15 px-3 py-2" placeholder={formText.placeholders.aiTools} value={aiTools} onChange={(event) => setAiTools(event.target.value)} aria-invalid={Boolean(errors.aiTools)} aria-describedby={errors.aiTools ? 'creator-ai-error' : undefined} />
+              {errors.aiTools && <span id="creator-ai-error" className="text-xs text-rose-700" role="alert">{errors.aiTools}</span>}
             </label>
             <label className="grid gap-2 text-sm font-bold">
               {formText.labels.summary}
-              <textarea className="focus-ring min-h-28 rounded-md border border-navy/15 px-3 py-2" value={summary} onChange={(event) => setSummary(event.target.value)} aria-invalid={Boolean(errors.summary)} />
-              {errors.summary && <span className="text-xs text-rose-700" role="alert">{errors.summary}</span>}
+              <textarea className="focus-ring min-h-28 rounded-md border border-navy/15 px-3 py-2" value={summary} onChange={(event) => setSummary(event.target.value)} aria-invalid={Boolean(errors.summary)} aria-describedby={errors.summary ? 'creator-summary-error' : undefined} />
+              {errors.summary && <span id="creator-summary-error" className="text-xs text-rose-700" role="alert">{errors.summary}</span>}
             </label>
-            <div className="grid gap-2">
+            <div className="grid gap-2" aria-describedby={errors.checks ? 'creator-checks-error' : undefined}>
               {formText.checks.map((item) => (
                 <label key={item} className="flex items-start gap-3 rounded-md bg-neutralPanel p-3 text-sm font-semibold">
                   <input
@@ -261,7 +261,7 @@ export function CreatorPage() {
                   {item}
                 </label>
               ))}
-              {errors.checks && <span className="text-xs font-bold text-rose-700" role="alert">{errors.checks}</span>}
+              {errors.checks && <span id="creator-checks-error" className="text-xs font-bold text-rose-700" role="alert">{errors.checks}</span>}
             </div>
             <Button type="submit">{t('submitMockProposal')}</Button>
           </form>
