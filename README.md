@@ -25,7 +25,7 @@ npm run build
 
 GitHub Pages is deployed by GitHub Actions. In repository settings, set Pages source to **GitHub Actions**.
 
-The Vite base path is set to `/MockParty/`. If the repository name changes, update `vite.config.js` and `package.json`.
+GitHub Pages builds with `GITHUB_PAGES=true`, so the Vite base path becomes `/MockParty/`. Vercel builds without that flag, so the base path is `/`.
 
 The app includes `noindex` metadata and a `robots.txt` disallow rule to discourage search indexing while the prototype is being reviewed. This is not access control.
 
