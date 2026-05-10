@@ -175,26 +175,26 @@ export function SubmitEntryPage() {
         {acceptsSubmissions && <form className="mt-6 grid gap-5" onSubmit={handleSubmit} noValidate>
           <label className="grid gap-2 text-sm font-bold">
             {text.entryTitle}
-            <input className="focus-ring rounded-md border border-navy/15 bg-white px-3 py-2 font-medium" value={title} onChange={(event) => setTitle(event.target.value)} />
-            {errors.title && <span className="text-xs text-rose-700">{errors.title}</span>}
+            <input className="focus-ring rounded-md border border-navy/15 bg-white px-3 py-2 font-medium" value={title} onChange={(event) => setTitle(event.target.value)} aria-invalid={Boolean(errors.title)} />
+            {errors.title && <span className="text-xs text-rose-700" role="alert">{errors.title}</span>}
           </label>
 
           <label className="grid gap-2 text-sm font-bold">
             {text.demoUrl}
-            <input className="focus-ring rounded-md border border-navy/15 bg-white px-3 py-2 font-medium" placeholder="https://example.com/prototype" value={demoUrl} onChange={(event) => setDemoUrl(event.target.value)} />
-            {errors.demoUrl && <span className="text-xs text-rose-700">{errors.demoUrl}</span>}
+            <input className="focus-ring rounded-md border border-navy/15 bg-white px-3 py-2 font-medium" placeholder="https://example.com/prototype" value={demoUrl} onChange={(event) => setDemoUrl(event.target.value)} aria-invalid={Boolean(errors.demoUrl)} />
+            {errors.demoUrl && <span className="text-xs text-rose-700" role="alert">{errors.demoUrl}</span>}
           </label>
 
           <label className="grid gap-2 text-sm font-bold">
             {text.aiTools}
-            <input className="focus-ring rounded-md border border-navy/15 bg-white px-3 py-2 font-medium" placeholder={text.aiPlaceholder} value={aiTools} onChange={(event) => setAiTools(event.target.value)} />
-            {errors.aiTools && <span className="text-xs text-rose-700">{errors.aiTools}</span>}
+            <input className="focus-ring rounded-md border border-navy/15 bg-white px-3 py-2 font-medium" placeholder={text.aiPlaceholder} value={aiTools} onChange={(event) => setAiTools(event.target.value)} aria-invalid={Boolean(errors.aiTools)} />
+            {errors.aiTools && <span className="text-xs text-rose-700" role="alert">{errors.aiTools}</span>}
           </label>
 
           <label className="grid gap-2 text-sm font-bold">
             {text.summary}
-            <textarea className="focus-ring min-h-32 rounded-md border border-navy/15 bg-white px-3 py-2 font-medium" value={summary} onChange={(event) => setSummary(event.target.value)} />
-            {errors.summary && <span className="text-xs text-rose-700">{errors.summary}</span>}
+            <textarea className="focus-ring min-h-32 rounded-md border border-navy/15 bg-white px-3 py-2 font-medium" value={summary} onChange={(event) => setSummary(event.target.value)} aria-invalid={Boolean(errors.summary)} />
+            {errors.summary && <span className="text-xs text-rose-700" role="alert">{errors.summary}</span>}
           </label>
 
           <fieldset className="grid gap-3">
@@ -205,7 +205,7 @@ export function SubmitEntryPage() {
                 <span>{item}</span>
               </label>
             ))}
-            {errors.safety && <span className="text-xs font-bold text-rose-700">{errors.safety}</span>}
+            {errors.safety && <span className="text-xs font-bold text-rose-700" role="alert">{errors.safety}</span>}
           </fieldset>
 
           <div className="flex flex-wrap justify-end gap-2 border-t border-navy/10 pt-5">

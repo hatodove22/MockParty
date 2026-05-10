@@ -156,7 +156,7 @@ export function WinnerReviewPage() {
                 <span>{item}</span>
               </label>
             ))}
-            {error && <span className="text-xs font-bold text-rose-700">{error}</span>}
+            {error && <span className="text-xs font-bold text-rose-700" role="alert">{error}</span>}
           </fieldset>
 
           <div className="mt-6 flex flex-wrap justify-end gap-2 border-t border-navy/10 pt-5">

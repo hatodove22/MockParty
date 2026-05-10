@@ -46,6 +46,7 @@ if (!persistedJapaneseText.includes('複数のUXモック')) {
 
 await page.evaluate(() => window.localStorage.setItem('mockcontest-language', 'en'));
 await page.goto(`${baseUrl}/#/contests/1/compare`, { waitUntil: 'networkidle' });
+await page.reload({ waitUntil: 'networkidle' });
 await page.evaluate(() => window.sessionStorage.clear());
 await page.reload({ waitUntil: 'networkidle' });
 const addToShortlist = page.getByRole('button', { name: /Add to shortlist/ });
@@ -65,6 +66,47 @@ const emptyCompareText = (await page.locator('body').innerText()).toLowerCase();
 if (!emptyCompareText.includes('no entries to compare yet') || !emptyCompareText.includes('submit first proposal')) {
   failures.push('No-entry comparison state did not render expected content');
 }
+
+await page.goto(`${baseUrl}/#/contests/1/submit`, { waitUntil: 'networkidle' });
+await page.getByRole('button', { name: /Submit entry/ }).click();
+let submitText = (await page.locator('body').innerText()).toLowerCase();
+if (!submitText.includes('title is required') || !submitText.includes('demo url is required')) {
+  failures.push('Submit form validation did not render expected errors');
+}
+await page.getByLabel(/Entry title/).fill('Smoke test proposal');
+await page.getByLabel(/Demo URL/).fill('https://example.com/smoke');
+await page.getByLabel(/AI tools used/).fill('UI generator and manual edits');
+await page.locator('textarea').fill('A static smoke-test proposal with declared prototype scope.');
+for (const checkbox of await page.locator('form input[type="checkbox"]').all()) {
+  await checkbox.check();
+}
+await page.getByRole('button', { name: /Submit entry/ }).click();
+await page.waitForURL(/submit\/success/);
+
+await page.goto(`${baseUrl}/#/contests/1/winner-review/101`, { waitUntil: 'networkidle' });
+await page.getByRole('button', { name: /Confirm winner review/ }).click();
+let winnerText = (await page.locator('body').innerText()).toLowerCase();
+if (!winnerText.includes('confirm every responsibility acknowledgement')) {
+  failures.push('Winner review validation did not render expected error');
+}
+for (const checkbox of await page.locator('form input[type="checkbox"]').all()) {
+  await checkbox.check();
+}
+await page.getByRole('button', { name: /Confirm winner review/ }).click();
+await page.waitForURL(/winner-review\/101\/success/);
+
+await page.goto(`${baseUrl}/#/contests/new`, { waitUntil: 'networkidle' });
+await page.getByRole('button', { name: /Booking/ }).first().click();
+await page.getByRole('button', { name: /^Next$/ }).click();
+await page.getByRole('button', { name: /Standard/ }).first().click();
+await page.getByRole('button', { name: /^Next$/ }).click();
+await page.getByRole('button', { name: /^Next$/ }).click();
+for (const checkbox of await page.locator('input[type="checkbox"]').all()) {
+  await checkbox.check();
+}
+await page.getByRole('button', { name: /^Next$/ }).click();
+await page.getByRole('button', { name: /Confirm mock contest/ }).click();
+await page.waitForURL(/contests\/new\/success/);
 
 await page.setViewportSize({ width: 390, height: 844 });
 await page.goto(`${baseUrl}/#/contests/1/compare`, { waitUntil: 'networkidle' });

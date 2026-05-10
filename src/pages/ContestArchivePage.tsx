@@ -5,10 +5,39 @@ import { Pill } from '../components/common/Pill';
 import { contests } from '../data/contests';
 import { entries } from '../data/entries';
 import { useLanguage } from '../i18n/LanguageContext';
+import { statusLabel } from '../utils/displayLabels';
+
+const archiveCopy = {
+  en: {
+    notFound: 'Archive not found',
+    backToContests: 'Back to contests',
+    back: 'Back to contest',
+    print: 'Print summary',
+    eyebrow: 'Final review archive',
+    title: 'Selected direction and handoff notes',
+    winner: 'Winner',
+    noWinner: 'No winner has been recorded for this static contest.',
+    boundaryTitle: 'Post-contest boundary',
+    boundaryItems: ['Prototype decision archived', 'Rights discussion remains separate', 'Production scope requires a new agreement', 'No real data transferred'],
+  },
+  ja: {
+    notFound: 'アーカイブが見つかりません',
+    backToContests: 'コンテスト一覧へ戻る',
+    back: 'コンテストへ戻る',
+    print: '概要を印刷',
+    eyebrow: '最終レビューアーカイブ',
+    title: '選定方向とハンドオフメモ',
+    winner: '受賞作品',
+    noWinner: 'この静的コンテストには受賞作品が記録されていません。',
+    boundaryTitle: 'コンテスト後の責任範囲',
+    boundaryItems: ['プロトタイプ判断をアーカイブ済み', '権利協議は別途実施', '本番範囲は新しい契約が必要', '実データは移転しない'],
+  },
+} as const;
 
 export function ContestArchivePage() {
   const { contestId } = useParams();
-  const { contestBrief, contestTitle } = useLanguage();
+  const { contestBrief, contestTitle, language } = useLanguage();
+  const text = archiveCopy[language];
   const contest = contests.find((item) => item.id === Number(contestId));
   const winner = contest ? entries.find((entry) => entry.contestId === contest.id && entry.winner) : undefined;
 
@@ -17,9 +46,9 @@ export function ContestArchivePage() {
       <main className="mx-auto max-w-4xl px-4 py-14 lg:px-6">
         <section className="mock-surface rounded-lg p-6">
           <Pill tone="rose">Not found</Pill>
-          <h1 className="mt-4 text-3xl font-black">Archive not found</h1>
+          <h1 className="mt-4 text-3xl font-black">{text.notFound}</h1>
           <Link to="/contests">
-            <Button className="mt-5">Back to contests</Button>
+            <Button className="mt-5">{text.backToContests}</Button>
           </Link>
         </section>
       </main>
@@ -29,17 +58,17 @@ export function ContestArchivePage() {
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 lg:px-6">
       <Link className="mb-5 inline-flex items-center gap-2 text-sm font-bold text-navy/65 hover:text-orange" to={`/contests/${contest.id}`}>
-        <ArrowLeft size={16} /> Back to contest
+        <ArrowLeft size={16} /> {text.back}
       </Link>
       <section className="mock-surface rounded-lg p-5">
-        <Pill tone={contest.status === 'Completed' ? 'green' : 'amber'}>{contest.status}</Pill>
+        <Pill tone={contest.status === 'Completed' ? 'green' : 'amber'}>{statusLabel(contest.status, language)}</Pill>
         <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-black md:text-5xl">{contestTitle(contest)}</h1>
             <p className="mt-3 max-w-3xl leading-7 text-navy/70">{contestBrief(contest)}</p>
           </div>
           <Button variant="ghost" onClick={() => window.print()}>
-            <Printer size={16} /> Print summary
+            <Printer size={16} /> {text.print}
           </Button>
         </div>
       </section>
@@ -51,14 +80,14 @@ export function ContestArchivePage() {
               <FileText size={21} />
             </div>
             <div>
-              <p className="text-sm font-black uppercase tracking-wide text-contestGreen">Final review archive</p>
-              <h2 className="text-2xl font-black">Selected direction and handoff notes</h2>
+              <p className="text-sm font-black uppercase tracking-wide text-contestGreen">{text.eyebrow}</p>
+              <h2 className="text-2xl font-black">{text.title}</h2>
             </div>
           </div>
           {winner ? (
             <div className="mt-5 rounded-lg border border-navy/10 bg-white p-4">
               <div className="flex flex-wrap gap-2">
-                <Pill tone="emerald">Winner</Pill>
+                <Pill tone="emerald">{text.winner}</Pill>
                 <Pill>{winner.creator}</Pill>
               </div>
               <h3 className="mt-3 text-xl font-black">{winner.title}</h3>
@@ -72,14 +101,14 @@ export function ContestArchivePage() {
               </div>
             </div>
           ) : (
-            <p className="mt-5 rounded-md bg-neutralPanel p-4 text-navy/70">No winner has been recorded for this static contest.</p>
+            <p className="mt-5 rounded-md bg-neutralPanel p-4 text-navy/70">{text.noWinner}</p>
           )}
         </article>
         <aside className="rounded-lg bg-navy p-5 text-white">
           <ShieldCheck className="text-mint" size={28} />
-          <h2 className="mt-4 text-2xl font-black">Post-contest boundary</h2>
+          <h2 className="mt-4 text-2xl font-black">{text.boundaryTitle}</h2>
           <div className="mt-5 grid gap-2">
-            {['Prototype decision archived', 'Rights discussion remains separate', 'Production scope requires a new agreement', 'No real data transferred'].map((item) => (
+            {text.boundaryItems.map((item) => (
               <div key={item} className="flex gap-2 rounded-md bg-white/10 p-3 text-sm font-semibold text-white/75">
                 <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-mint" /> {item}
               </div>

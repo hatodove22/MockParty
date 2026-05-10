@@ -201,7 +201,7 @@ export function ContestWizard({ open = true, onClose = () => undefined, embedded
 
       <div className="mb-4 min-h-6">
         {(error || stepStatus) && (
-          <p className={`text-sm font-bold ${error ? 'text-rose-700' : 'text-navy/55'}`}>
+          <p className={`text-sm font-bold ${error ? 'text-rose-700' : 'text-navy/55'}`} role={error ? 'alert' : undefined}>
             {error || stepStatus}
           </p>
         )}
