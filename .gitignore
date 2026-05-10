@@ -5,3 +5,5 @@ mockcontest-concept.png
 .env
 .env.*
 .vercel/
+
+.vercel
